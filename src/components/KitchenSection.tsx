@@ -25,14 +25,14 @@ export default function KitchenSection() {
         kicker="Discover Our"
         title={
           <>
-            Winter <span className="italic text-[var(--accent-light)]">Collection</span>
+            Winter <span className="italic  mynavnewnavnavnav">Collection</span>
           </>
         }
         subtitle="Refresh your space with deep hues and modern decor."
         cta="View Collection"
-        img="https://res.cloudinary.com/dh2c4clxo/image/upload/v1779542444/Winter-Collection.png_nfjdfp.webp"
+        img="https://res.cloudinary.com/dh2c4clxo/image/upload/v1779706499/0426b19a-0fc2-4905-86c4-673d83527803_ssvpd0.jpg"
         alt="Winter collection — cozy modern living room"
-        dark
+         
       />
  
     </>
