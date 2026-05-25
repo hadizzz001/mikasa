@@ -1,4 +1,5 @@
 import Hero from "../components/Hero";
+import CircleCategories from "../components/CircleCategories";
 import DecorCategories from "../components/DecorCategories";
 import NewArrivals from "../components/NewArrivals";
 import KitchenSection from "../components/KitchenSection";
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <CircleCategories />
       <DecorCategories />
       <NewArrivals />
       <KitchenSection />

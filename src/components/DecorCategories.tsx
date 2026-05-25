@@ -97,18 +97,15 @@ export default function DecorCategories() {
     <section id="homedecor" className="py-16 lg:py-24 bg-white">
       <div className="container-x">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
-          {/* Left: rounded gold box */}
+          {/* Left: creative blob promo card */}
           <Reveal className="lg:col-span-4">
-            <div
-              className="h-full rounded-2xl p-8 md:p-10 lg:p-12 flex flex-col justify-center text-[var(--dark)]"
-              style={{ backgroundColor: "#f1cc86" }}
-            >
-              <h5 className="kicker mb-3 text-[var(--dark)]">DISCOVER OUR</h5>
-              <h2 className="section-title mb-4">Home Décor Collection</h2>
-              <p className="leading-relaxed mb-7 text-[var(--dark)]/80">
+            <div className="sana-decor-blob">
+              <h5 className="kicker mb-3 sana-decor-blob__kicker">DISCOVER OUR</h5>
+              <h2 className="section-title mb-4 sana-decor-blob__title">Home Décor Collection</h2>
+              <p className="leading-relaxed mb-7 sana-decor-blob__text">
                 Find the perfect accents for your home in our Home Décor section!
               </p>
-              <a href="#" className="btn-primary self-start">
+              <a href="#" className="sana-decor-blob__cta">
                 SHOP ALL COLLECTION
               </a>
             </div>

@@ -417,7 +417,7 @@ export default function Navbar() {
         </div>
 
         <nav
-          className="hidden lg:block bg-black text-white relative"
+          className="hidden lg:block bg-white  relative"
           onMouseEnter={() => {
             if (closeTimer.current) clearTimeout(closeTimer.current);
           }}
@@ -436,7 +436,7 @@ export default function Navbar() {
                   >
                     <a
                       href={c.href}
-                      className={`relative h-full flex items-center gap-1.5 text-[0.82rem] font-semibold tracking-wide uppercase transition-colors ${
+                      className={`relative h-full flex items-center gap-1.5 text-[0.82rem] font-semibold tracking-wide uppercase transition-colors mynavnewnavnavnav ${
                         isActive ? "text-[var(--accent)]" : "text-white hover:text-[var(--accent)]"
                       }`}
                     >
@@ -529,10 +529,9 @@ export default function Navbar() {
 
       {/* Backdrop for mega menu — purely decorative, no pointer handling so it doesn't fight with the panel */}
       <div
-        className={`hidden lg:block fixed inset-x-0 top-0 bottom-0 bg-black/30 transition-opacity duration-200 pointer-events-none ${
+        className={`sana-navbar-megamenu-backdrop hidden lg:block fixed inset-x-0 top-0 bottom-0 bg-black/30 transition-opacity duration-200 pointer-events-none ${
           activeMenu ? "opacity-100" : "opacity-0"
         }`}
-        style={{ zIndex: 30 }}
         aria-hidden
       />
 
@@ -550,34 +549,34 @@ export default function Navbar() {
         />
         {/* Panel */}
         <aside
-          className={`absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-black text-white shadow-2xl flex flex-col transition-transform duration-300 ${
+          className={`absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-[#f1cc86] text-white shadow-2xl flex flex-col transition-transform duration-300 ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">
+          <div className="flex items-center justify-between px-5 h-16 border-b border-white/30">
          
             <button
               onClick={() => setMobileOpen(false)}
-              className="icon-btn text-white  whitez"
+              className="inline-flex items-center justify-center w-10 h-10 rounded-full text-white hover:bg-white/15 transition"
               aria-label="Close menu"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2">
                 <path d="M6 6l12 12M6 18L18 6" strokeLinecap="round" />
               </svg>
             </button>
           </div>
 
           {/* Search */}
-          <div className="px-5 py-4 border-b border-white/10">
-            <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-white/70">
+          <div className="px-5 py-4 border-b border-white/30">
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2.5 border border-white/40 focus-within:border-white transition">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-white">
                 <circle cx="11" cy="11" r="7" />
                 <path d="m20 20-3.5-3.5" strokeLinecap="round" />
               </svg>
               <input
                 type="text"
                 placeholder="Search…"
-                className="flex-1 bg-transparent outline-none text-sm placeholder:text-white/50 text-white"
+                className="flex-1 bg-transparent outline-none text-sm font-semibold placeholder:text-white/80 text-white"
               />
             </div>
           </div>
@@ -587,17 +586,17 @@ export default function Navbar() {
               const isOpen = mobileExpanded === c.label;
               const hasMenu = !!c.columns?.length;
               return (
-                <li key={c.label} className="border-b border-white/10">
+                <li key={c.label} className="border-b border-white/25">
                   <div className="flex items-center">
                     <a
                       href={c.href}
                       onClick={() => !hasMenu && setMobileOpen(false)}
-                      className="flex-1 py-3.5 px-3 text-sm uppercase tracking-wide text-white"
+                      className="flex-1 py-3.5 px-3 text-base uppercase tracking-wide text-white font-extrabold"
                     >
                       <span className="flex items-center gap-2">
                         {c.label}
                         {c.badge === "new" && (
-                          <span className="px-1.5 py-0.5 text-[0.55rem] font-bold tracking-widest bg-[var(--accent)] text-black rounded">
+                          <span className="px-1.5 py-0.5 text-[0.55rem] font-bold tracking-widest bg-white text-[#f1cc86] rounded">
                             NEW
                           </span>
                         )}
@@ -610,7 +609,7 @@ export default function Navbar() {
                         }
                         aria-label={isOpen ? "Collapse" : "Expand"}
                         aria-expanded={isOpen}
-                        className="px-4 py-3 text-white/80 hover:text-[var(--accent)]"
+                        className="px-4 py-3 text-white/90 hover:text-white"
                       >
                         <svg
                           width="14"
@@ -634,13 +633,13 @@ export default function Navbar() {
                       }`}
                     >
                       <div className="overflow-hidden">
-                        <div className="bg-white/5 px-3 py-3 space-y-4">
+                        <div className="bg-white/10 px-3 py-3 space-y-4 rounded-lg mx-1 my-2">
                           {c.columns!.map((col) => (
                             <div key={col.title}>
                               <a
                                 href={col.href}
                                 onClick={() => setMobileOpen(false)}
-                                className="block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-[var(--accent)] mb-2"
+                                className="block text-xs font-extrabold tracking-[0.2em] uppercase text-white mb-2"
                               >
                                 {col.title}
                               </a>
@@ -650,7 +649,7 @@ export default function Navbar() {
                                     <a
                                       href={it.href}
                                       onClick={() => setMobileOpen(false)}
-                                      className="block py-1.5 text-sm text-white/80 hover:text-white"
+                                      className="block py-1.5 text-sm font-semibold text-white hover:text-white hover:translate-x-1 transition"
                                     >
                                       {it.label}
                                     </a>
@@ -667,14 +666,6 @@ export default function Navbar() {
               );
             })}
           </ul>
-
-          <div className="px-5 py-4 border-t border-white/10 flex items-center gap-2 text-white/80 text-sm">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z" />
-              <circle cx="12" cy="9" r="2.5" />
-            </svg>
-            <span>Beirut, Lebanon</span>
-          </div>
         </aside>
       </div>
 

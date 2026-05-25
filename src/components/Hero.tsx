@@ -14,12 +14,12 @@ const banners: {
   bottomRight: Banner;
 } = {
   left: {
-    src: "https://www.rayanesbhomes.com/wp-content/uploads/2026/05/Banner-1-2.png.webp",
+    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779704562/04564630-1ea3-4e03-ae79-3a279e41ea13_bpnkxv.jpg",
     alt: "What's new collection",
     href: "#whats-new",
   },
   topRight: {
-    src: "https://www.rayanesbhomes.com/wp-content/uploads/2026/05/Banner-2-2.png.webp",
+    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779704563/650b69ae-e544-4a84-a953-93c58755661c_hr4yzu.jpg",
     alt: "Back in stock favorites",
     href: "#back-in-stock",
   },
