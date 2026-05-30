@@ -1,68 +1,18 @@
 "use client";
 
-const categoryLinks = [
-  "What's New",
-  "Gift Card",
-  "Back in stock",
-  "Sale",
-  "Décor & Pillows",
-  "Storage & Organization",
-  "Home & Kitchen",
-  "Tabletop & Bar",
-  "Bedding & Bath",
-  "&kids",
-  "Beauty & Health",
-  "Brands",
-];
-
-const legalLinks = ["Terms & Conditions", "Privacy Policy"];
-
-const aboutLinks = ["About Us", "Store Location", "Design Services", "Contact Us"];
-
 const socials = [
   {
     label: "Facebook",
     href: "#",
     icon: (
-      <path d="M13 22v-9h3l1-4h-4V7a1.5 1.5 0 0 1 1.5-1.5H17V2.1A22 22 0 0 0 14.6 2C12 2 10 3.6 10 6.5V9H7v4h3v9h3Z" />
+      <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.25-1.5 1.55-1.5h1.65V4.6c-.3-.04-1.27-.13-2.4-.13-2.37 0-4 1.45-4 4.1v2.32H7.5V14h2.8v8h3.2Z" />
     ),
   },
   {
     label: "Instagram",
-    href: "#",
+    href: "https://www.instagram.com/sanahome.lb/",
     icon: (
-      <>
-        <rect x="3" y="3" width="18" height="18" rx="5" />
-        <circle cx="12" cy="12" r="4" />
-        <circle cx="17.5" cy="6.5" r="1" />
-      </>
-    ),
-  },
-  {
-    label: "TikTok",
-    href: "#",
-    icon: (
-      <path d="M16 3c.3 2.2 1.6 4 4 4v3c-1.5 0-2.8-.4-4-1v6.5a5.5 5.5 0 1 1-5.5-5.5c.5 0 1 .07 1.5.2v3a2.5 2.5 0 1 0 1.5 2.3V3H16Z" />
-    ),
-  },
-  {
-    label: "Pinterest",
-    href: "#",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M11 22c.5-2 1-4 1.5-6.5M9 12c0-3 1.5-5 4-5s4 1.7 4 4-2 4-4.5 4c-1 0-1.6-.5-1.8-1.2" />
-      </>
-    ),
-  },
-  {
-    label: "YouTube",
-    href: "#",
-    icon: (
-      <>
-        <rect x="2.5" y="6" width="19" height="12" rx="3" />
-        <path d="m10 9 5 3-5 3V9Z" fill="currentColor" />
-      </>
+      <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.5.01-4.74.07-1.14.05-1.76.24-2.17.4-.55.21-.94.47-1.35.88-.41.41-.67.8-.88 1.35-.16.41-.35 1.03-.4 2.17-.06 1.24-.07 1.6-.07 4.74s.01 3.5.07 4.74c.05 1.14.24 1.76.4 2.17.21.55.47.94.88 1.35.41.41.8.67 1.35.88.41.16 1.03.35 2.17.4 1.24.06 1.6.07 4.74.07s3.5-.01 4.74-.07c1.14-.05 1.76-.24 2.17-.4.55-.21.94-.47 1.35-.88.41-.41.67-.8.88-1.35.16-.41.35-1.03.4-2.17.06-1.24.07-1.6.07-4.74s-.01-3.5-.07-4.74c-.05-1.14-.24-1.76-.4-2.17a3.63 3.63 0 0 0-.88-1.35 3.63 3.63 0 0 0-1.35-.88c-.41-.16-1.03-.35-2.17-.4-1.24-.06-1.6-.07-4.74-.07Zm0 2.76a5.3 5.3 0 1 0 0 10.6 5.3 5.3 0 0 0 0-10.6Zm0 8.74a3.44 3.44 0 1 1 0-6.88 3.44 3.44 0 0 1 0 6.88Zm6.74-8.94a1.24 1.24 0 1 1-2.48 0 1.24 1.24 0 0 1 2.48 0Z" />
     ),
   },
 ];
@@ -71,73 +21,57 @@ export default function Footer() {
   return (
     <footer className="sana-footer">
       <div className="container-x sana-footer__top">
-        <div className="sana-footer__brand">
-          <h3 className="sana-footer__logo">Sana Home</h3>
-          <p className="sana-footer__tagline">
-            Home Décor &amp; Accessories — curated collections for the way you live.
-            Beirut, Lebanon.
+        <div className="sana-footer__col">
+          <a href="/about" className="sana-footer__heading-link">
+            <h4 className="sana-footer__heading">About Us</h4>
+          </a>
+          <p className="sana-footer__text">
+            Modern Home Accessories for Peaceful Living
           </p>
-          <ul className="sana-footer__about">
-            {aboutLinks.map((l) => (
-              <li key={l}>
-                <a href="#" className="sana-footer__link">{l}</a>
-              </li>
-            ))}
-          </ul>
         </div>
 
         <div className="sana-footer__col">
-          <h4 className="sana-footer__heading">Categories</h4>
-          <ul className="sana-footer__cats">
-            {categoryLinks.map((l) => (
-              <li key={l}>
-                <a href="#" className="sana-footer__link">{l}</a>
-              </li>
-            ))}
+          <a
+            href="https://wa.me/96181543771"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sana-footer__heading-link"
+          >
+            <h4 className="sana-footer__heading">Contact Us</h4>
+          </a>
+          <ul className="sana-footer__contact">
+            <li>Address: Sidon, Lebanon</li>
+            <li>Phone: +961 81 543 771</li>
+            <li>Email: hello@sanahome.com</li>
           </ul>
         </div>
+      </div>
 
-        <div className="sana-footer__col">
-          <h4 className="sana-footer__heading">Follow Us</h4>
-          <ul className="sana-footer__socials" aria-label="Social media">
-            {socials.map((s) => (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  aria-label={s.label}
-                  className="sana-footer__social"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {s.icon}
-                  </svg>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="container-x sana-footer__follow">
+        <h4 className="sana-footer__heading">Follow Us</h4>
+        <ul className="sana-footer__socials" aria-label="Social media">
+          {socials.map((s) => (
+            <li key={s.label}>
+              <a
+                href={s.href}
+                aria-label={s.label}
+                className="sana-footer__social"
+              >
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+                  {s.icon}
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="sana-footer__bar mb-20">
         <div className="container-x sana-footer__bar-inner">
           <p>© {new Date().getFullYear()} Sana Home. All rights reserved.</p>
-          <ul className="sana-footer__legal">
-            {legalLinks.map((l) => (
-              <li key={l}>
-                <a href="#" className="sana-footer__link">{l}</a>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </footer>
   );
 }
+

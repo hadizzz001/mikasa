@@ -1,74 +1,92 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Reveal from "./Reveal";
-
-type CircleCat = {
-  label: string;
-  href: string;
-  src: string;
-};
-
-const circleCategories: CircleCat[] = [
-  {
-    label: "Decor & Pillows",
-    href: "#decor",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554412/makeup_ebbdng.jpg",
-  },
-  {
-    label: "Storage & Organization",
-    href: "#storage",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554412/bin_aokba9.jpg",
-  },
-  {
-    label: "Home & Kitchen",
-    href: "#kitchen",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554413/office_fj2mzl.jpg",
-  },
-  {
-    label: "Tabletop & Bar",
-    href: "#tabletop",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554412/furnt_uumhy1.jpg",
-  },
-  {
-    label: "Bedding & Bath",
-    href: "#bedding",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554412/entry_nsrzvv.jpg",
-  },
-  {
-    label: "&Kids",
-    href: "#kids",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554413/wall_a8ykaa.jpg",
-  },
-  {
-    label: "Beauty & Health",
-    href: "#beauty",
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779554412/closet_pk4rkf.jpg",
-  },
-];
+import { circleCategories } from "../data/categories";
 
 export default function CircleCategories() {
+  const perView = 5;
+  const count = circleCategories.length;
+  const [index, setIndex] = useState(0);
+  const [animate, setAnimate] = useState(true);
+
+  // Duplicate the list so the track can scroll seamlessly without snapping back.
+  const loop = [...circleCategories, ...circleCategories];
+
+  // Auto-advance one item at a time, forever in the same direction.
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  useEffect(() => {
+    timer.current = setInterval(() => {
+      setIndex((i) => i + 1);
+    }, 3000);
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
+  }, []);
+
+  // When we've scrolled a full set, jump back to the start with no transition,
+  // creating an endless one-direction loop.
+  useEffect(() => {
+    if (index === count) {
+      const t = setTimeout(() => {
+        setAnimate(false);
+        setIndex(0);
+      }, 650);
+      return () => clearTimeout(t);
+    }
+    if (index === 0 && !animate) {
+      // Re-enable the transition on the next frame after the silent reset.
+      const r = requestAnimationFrame(() => setAnimate(true));
+      return () => cancelAnimationFrame(r);
+    }
+  }, [index, count, animate]);
+
+  const itemBasis = 100 / perView;
+  const offset = index * itemBasis;
+
   return (
     <section className="sana-circle-cats" aria-label="Shop by category">
       <div className="container-x">
         <Reveal>
-          <ul className="sana-circle-cats__list">
-            {circleCategories.map((c) => (
-              <li key={c.label} className="sana-circle-cats__item">
-                <a href={c.href} className="sana-circle-cats__link">
-                  <span className="sana-circle-cats__thumb">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={c.src}
-                      alt={c.label}
-                      loading="lazy"
-                      className="sana-circle-cats__img"
-                    />
-                  </span>
-                  <span className="sana-circle-cats__label">{c.label}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className="cat-slider">
+            <div className="cat-slider__viewport">
+              <ul
+                className="cat-slider__track"
+                style={{
+                  transform: `translateX(-${offset}%)`,
+                  transition: animate ? undefined : "none",
+                }}
+              >
+                {loop.map((c, i) => (
+                  <li
+                    key={`${c.label}-${i}`}
+                    className="cat-slider__item"
+                    style={{ flexBasis: `${itemBasis}%` }}
+                    aria-hidden={i >= count}
+                  >
+                    <a href={c.href} className="sana-circle-cats__link">
+                      <span className="sana-circle-cats__thumb">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={c.src}
+                          alt={c.label}
+                          loading="lazy"
+                          className="sana-circle-cats__img"
+                        />
+                      </span>
+                      <span className="sana-circle-cats__label">{c.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>
   );
 }
+
+
+
+

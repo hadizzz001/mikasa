@@ -1,109 +1,35 @@
 import Image from "next/image";
 import Reveal from "./Reveal";
 
-type Banner = {
-  src: string;
-  alt: string;
-  href: string;
+const banner = {
+  src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1780083005/dd79e1a0-463e-405f-8135-d081fd96cf28_ytu0dr.jpg",
+  alt: "What's new collection",
+  href: "#whats-new",
 };
-
-const banners: {
-  left: Banner;
-  topRight: Banner;
-  bottomLeft: Banner;
-  bottomRight: Banner;
-} = {
-  left: {
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779704562/04564630-1ea3-4e03-ae79-3a279e41ea13_bpnkxv.jpg",
-    alt: "What's new collection",
-    href: "#whats-new",
-  },
-  topRight: {
-    src: "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779704563/650b69ae-e544-4a84-a953-93c58755661c_hr4yzu.jpg",
-    alt: "Back in stock favorites",
-    href: "#back-in-stock",
-  },
-  bottomLeft: {
-    src: "https://www.rayanesbhomes.com/wp-content/uploads/2026/05/Banner-3-2.png.webp",
-    alt: "Storage & organization",
-    href: "#storage",
-  },
-  bottomRight: {
-    src: "https://www.rayanesbhomes.com/wp-content/uploads/2026/05/Banner-4-2.png.webp",
-    alt: "Clearance sale",
-    href: "#sale",
-  },
-};
-
-function BannerCard({
-  banner,
-  className = "",
-  priority = false,
-  sizes,
-}: {
-  banner: Banner;
-  className?: string;
-  priority?: boolean;
-  sizes?: string;
-}) {
-  return (
-    <a
-      href={banner.href}
-      aria-label={banner.alt}
-      className={`group relative block overflow-hidden rounded-lg bg-[var(--surface)] ${className}`}
-    >
-      <Image
-        src={banner.src}
-        alt={banner.alt}
-        fill
-        priority={priority}
-        sizes={sizes ?? "(min-width: 1024px) 50vw, 100vw"}
-        className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-      />
-    </a>
-  );
-}
 
 export default function Hero() {
   return (
     <section id="hero" className="relative w-full bg-white">
-      <div className="container-x py-6 md:py-10">
+      <div className="container-x ">
         <Reveal>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
-            {/* Left: large square banner */}
-            <BannerCard
-              banner={banners.left}
-              className="aspect-square w-full"
+          <a
+            href={banner.href}
+            aria-label={banner.alt}
+            className="group block overflow-hidden rounded-[10px]"
+          >
+            <Image
+              src={banner.src}
+              alt={banner.alt}
+              width={1920}
+              height={800}
               priority
-              sizes="(min-width: 1024px) 50vw, 100vw"
+              sizes="100vw"
+              className="w-full h-auto object-contain transition-transform duration-[1200ms] ease-out group-hover:scale-[1.02]"
             />
-
-            {/* Right column: rectangle on top + two squares under it */}
-            <div className="grid lg:grid-rows-[1fr_1fr] gap-4 md:gap-5">
-              {/* Top rectangle */}
-              <BannerCard
-                banner={banners.topRight}
-                className="w-full aspect-[5/2] lg:aspect-auto lg:h-full"
-                sizes="(min-width: 1024px) 50vw, 100vw"
-              />
-
-              {/* Two squares */}
-              <div className="grid grid-cols-2 gap-4 md:gap-5">
-                <BannerCard
-                  banner={banners.bottomLeft}
-                  className="w-full aspect-square"
-                  sizes="(min-width: 1024px) 25vw, 50vw"
-                />
-                <BannerCard
-                  banner={banners.bottomRight}
-                  className="w-full aspect-square"
-                  sizes="(min-width: 1024px) 25vw, 50vw"
-                />
-              </div>
-            </div>
-          </div>
+          </a>
         </Reveal>
       </div>
     </section>
   );
 }
+

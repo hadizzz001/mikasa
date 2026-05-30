@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Search, ChevronDown } from "lucide-react";
 import SearchModal from "./SearchModal";
 import CartModal from "./CartModal";
 
@@ -314,8 +315,8 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full">
-      <div className="bg-[var(--accent)] text-white">
+    <header className="relative z-50 w-full">
+      <div className="bg-[var(--accent)] text-[#222]">
         <div className="container-x flex items-center justify-center h-9">
           <p className="text-[0.78rem] md:text-[0.82rem] font-semibold tracking-[0.12em] uppercase text-center">
             We have delivery on all Lebanon!
@@ -328,35 +329,11 @@ export default function Navbar() {
           scrolled ? "shadow-[0_4px_20px_-12px_rgba(0,0,0,0.18)]" : ""
         }`}
       >
-        <div className="container-x flex items-center gap-6 h-20 relative">
-          <div className="flex items-center gap-[5px]">
-            <button
-              onClick={() => setMobileOpen((v) => !v)}
-              className="nav-hamburger-mobile-only icon-btn"
-              aria-label="Open menu"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
-              </svg>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="sana-mobile-search-only icon-btn md:hidden"
-              aria-label="Search"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <circle cx="11" cy="11" r="7" />
-                <path d="m20 20-3.5-3.5" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-
+        <div className="container-x flex flex-col items-center gap-4 py-5">
           <a
             href="#"
             aria-label="Sana Home"
-            className="flex items-center mr-2 shrink-0 absolute left-1/2 -translate-x-1/2 md:static md:left-auto md:translate-x-0"
+            className="flex items-center shrink-0"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -366,54 +343,46 @@ export default function Navbar() {
             />
           </a>
 
-          <div className="hidden md:flex flex-1 max-w-2xl">
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="flex w-full items-center border border-[var(--border)] rounded-[var(--radius)] px-3 h-9 hover:border-[var(--accent)] transition text-left"
-              aria-label="Open search"
-            >
-              <svg className="text-[var(--muted-fg)] mr-2 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <circle cx="11" cy="11" r="7" />
-                <path d="m20 20-3.5-3.5" strokeLinecap="round" />
-              </svg>
-              <span className="flex-1 text-sm text-[var(--muted-fg)]">
-                Search for products, brands, categories…
-              </span>
-            </button>
+          <div className="w-full max-w-2xl">
+            <div className="relative">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-fg)] pointer-events-none"
+                size={18}
+                strokeWidth={1.7}
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                placeholder="Search for products, brands, categories…"
+                aria-label="Search"
+                className="w-full h-9 pl-11 pr-4 rounded-[var(--radius)] border border-[var(--border)] bg-white text-sm text-[var(--foreground)] placeholder:text-[var(--muted-fg)] outline-none focus:border-[var(--accent)] transition"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-[5px] ml-auto">
+          <div className="w-full border-t border-[#e5e5e5]" />
+
+          <nav aria-label="Primary links" className="flex items-center gap-8">
             <a
-              href="#"
-              aria-label="Visit our store — Beirut, Lebanon"
-              className="hidden md:inline-flex icon-btn"
-              title="Visit our store"
+              href="#new-arrivals"
+              className="text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z" />
-                <circle cx="12" cy="9" r="2.5" />
-              </svg>
+              New Arrivals
             </a>
-            <a href="#" className="icon-btn" aria-label="Wishlist">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6.5a5.5 5.5 0 0 1 9.5 5.5C19 16.5 12 21 12 21Z" />
-              </svg>
-            </a>
-            <button
-              type="button"
-              onClick={() => setCartOpen(true)}
-              className="icon-btn relative"
-              aria-label="Cart"
+            <a
+              href="/shop"
+              className="inline-flex items-center gap-1 text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M3 4h2l2.5 12.5A2 2 0 0 0 9.46 18H18a2 2 0 0 0 2-1.6L21.5 8H6" />
-                <circle cx="9" cy="21" r="1.4" />
-                <circle cx="18" cy="21" r="1.4" />
-              </svg>
-              <span className="cart-badge">0</span>
-            </button>
-          </div>
+              Shop
+              <ChevronDown size={15} strokeWidth={2} aria-hidden="true" />
+            </a>
+            <a
+              href="#best-sellers"
+              className="text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
+            >
+              Best Sellers
+            </a>
+          </nav>
         </div>
 
         <nav
@@ -549,7 +518,7 @@ export default function Navbar() {
         />
         {/* Panel */}
         <aside
-          className={`absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-[#f1cc86] text-white shadow-2xl flex flex-col transition-transform duration-300 ${
+          className={`absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-[#ebe3d8] text-white shadow-2xl flex flex-col transition-transform duration-300 ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -596,7 +565,7 @@ export default function Navbar() {
                       <span className="flex items-center gap-2">
                         {c.label}
                         {c.badge === "new" && (
-                          <span className="px-1.5 py-0.5 text-[0.55rem] font-bold tracking-widest bg-white text-[#f1cc86] rounded">
+                          <span className="px-1.5 py-0.5 text-[0.55rem] font-bold tracking-widest bg-white text-[#ebe3d8] rounded">
                             NEW
                           </span>
                         )}

@@ -1,5 +1,8 @@
 import Hero from "../components/Hero";
+import Hero1 from "../components/Hero1";
+import Hero2 from "../components/Hero2";
 import CircleCategories from "../components/CircleCategories";
+import PromoSlider from "../components/PromoSlider";
 import DecorCategories from "../components/DecorCategories";
 import NewArrivals from "../components/NewArrivals";
 import KitchenSection from "../components/KitchenSection";
@@ -14,11 +17,9 @@ export default function Home() {
     <>
       <Hero />
       <CircleCategories />
-      <DecorCategories />
-      <NewArrivals />
-      <KitchenSection />
-      <StorageCollection />
-      <CatGrid /> 
+      <PromoSlider /> 
+      <Hero1 />
+      <Hero2 />
     </>
   );
 }
