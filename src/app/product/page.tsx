@@ -262,7 +262,10 @@ function ProductContent() {
                     <button
                       key={i}
                       disabled={sizeOut}
-                      onClick={() => setSelectedSize(s.size)}
+                      onClick={() => {
+                        setSelectedSize(s.size);
+                        setQty(1);
+                      }}
                       className={`min-w-[3rem] px-4 h-11 rounded-md border text-sm font-medium transition ${
                         selectedSize === s.size
                           ? "border-[var(--accent)] bg-[var(--accent)] text-black"
