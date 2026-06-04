@@ -148,9 +148,15 @@ export default function Navbar() {
                 shopTimer.current = setTimeout(() => setShopOpen(false), 180);
               }}
             >
-              <a
-                href="/shop"
-                className="inline-flex items-center gap-1 text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
+              <button
+                type="button"
+                aria-expanded={shopOpen}
+                aria-haspopup="true"
+                onClick={() => {
+                  if (shopTimer.current) clearTimeout(shopTimer.current);
+                  setShopOpen((v) => !v);
+                }}
+                className="inline-flex items-center gap-1 text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors cursor-pointer"
               >
                 Shop
                 <ChevronDown
@@ -159,7 +165,7 @@ export default function Navbar() {
                   aria-hidden="true"
                   className={`transition-transform duration-200 ${shopOpen ? "rotate-180" : ""}`}
                 />
-              </a>
+              </button>
 
               {/* Categories dropdown */}
               <div

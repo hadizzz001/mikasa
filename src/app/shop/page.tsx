@@ -2,6 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { SlidersHorizontal } from "lucide-react";
 import CarCard from "../../components/CarCard";
 import Pagination from "../../components/Pagination";
 import type { Product } from "../../lib/productPricing";
@@ -133,27 +134,36 @@ function ShopContent() {
     </div>
   );
 
+  const activeCount = selectedCats.length + (filter ? 1 : 0);
+
   return (
     <div className="container-x py-10 lg:py-14">
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <p className="text-xs tracking-[0.25em] uppercase text-[var(--muted-fg)] mb-2">Sana Home</p>
-        <h1 className="font-serif text-3xl lg:text-4xl font-bold uppercase tracking-wide">Shop All</h1>
-        {!loading && (
-          <p className="mt-2 text-sm text-[var(--muted-fg)]">{totalItems} products</p>
-        )}
-      </div>
+      {/* Minimal toolbar */}
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-sm text-[var(--muted-fg)]">
+          {loading ? "\u00A0" : `${totalItems} products`}
+        </p>
 
-      {/* Mobile filter toggle */}
-      <div className="lg:hidden mb-5">
+        {/* Mobile filter toggle */}
         <button
           onClick={() => setMobileFiltersOpen((v) => !v)}
-          className="w-full btn-primary"
+          aria-expanded={mobileFiltersOpen}
+          className="lg:hidden inline-flex items-center gap-2 text-sm font-medium text-[var(--foreground)]"
         >
-          {mobileFiltersOpen ? "Hide Filters" : "Show Filters"}
+          <SlidersHorizontal size={16} strokeWidth={1.8} />
+          Filters
+          {activeCount > 0 && (
+            <span className="text-[var(--accent-dark)]">({activeCount})</span>
+          )}
         </button>
-        {mobileFiltersOpen && <div className="mt-5 border-t border-[var(--border)] pt-5">{Sidebar}</div>}
       </div>
+
+      {/* Mobile filter panel */}
+      {mobileFiltersOpen && (
+        <div className="lg:hidden mb-8 border-t border-b border-[var(--border)] py-6">
+          {Sidebar}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
         <aside className="hidden lg:block">{Sidebar}</aside>

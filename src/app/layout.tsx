@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import BottomNav from "../components/BottomNav";
+import BackButton from "../components/BackButton";
 import TrustBadges from "../components/TrustBadges";
 import Providers from "../components/Providers";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-[var(--foreground)]">
         <Providers>
           <Navbar />
+          <BackButton />
           <main className="flex-1">{children}</main>
           <TrustBadges />
           <Footer />

@@ -513,7 +513,7 @@ color: #ebe3d8 !important;
   gap: 0.45rem;
   text-align: center;
   width: 100%;
-  max-width: 120px;
+  max-width: 140px;
   margin: 0 auto;
   transition: transform 0.35s ease;
 }
@@ -524,8 +524,11 @@ color: #ebe3d8 !important;
 .sana-circle-cats__thumb {
   position: relative;
   display: block;
-  width: 100%;
-  max-width: 96px;
+  /* Force every circle to the EXACT same size, independent of the source
+     image dimensions or the slider column width. width === height. */
+  width: clamp(52px, 16vw, 96px) !important;
+  height: clamp(52px, 16vw, 96px) !important;
+  max-width: none !important;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
   border-radius: 9999px;
@@ -540,10 +543,11 @@ color: #ebe3d8 !important;
   position: absolute;
   inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+  /* Always fill the circle identically for portrait, landscape or square sources. */
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
   transition: transform 0.7s ease;
 }
 .sana-circle-cats__link:hover .sana-circle-cats__img {
@@ -552,7 +556,14 @@ color: #ebe3d8 !important;
 
 @media (min-width: 768px) {
   .sana-circle-cats__thumb {
-    max-width: 120px;
+    width: clamp(72px, 11vw, 108px) !important;
+    height: clamp(72px, 11vw, 108px) !important;
+  }
+}
+@media (min-width: 1024px) {
+  .sana-circle-cats__thumb {
+    width: clamp(88px, 8vw, 120px) !important;
+    height: clamp(88px, 8vw, 120px) !important;
   }
 }
 
