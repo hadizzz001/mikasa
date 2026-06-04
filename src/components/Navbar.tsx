@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, ChevronDown } from "lucide-react";
 import SearchModal from "./SearchModal";
-import CartModal from "./CartModal";
 
 type SubColumn = { title: string; href: string; items: { label: string; href: string }[] };
 type MainCat = {
@@ -14,269 +14,7 @@ type MainCat = {
   featured?: { title: string; subtitle: string; href: string; image: string };
 };
 
-const mainCategories: MainCat[] = [
-  {
-    label: "Decor & Pillows",
-    href: "#decor",
-    columns: [
-      {
-        title: "Decor",
-        href: "#decor",
-        items: [
-          { label: "Decorative Pillows", href: "#" },
-          { label: "Throws & Blankets", href: "#" },
-          { label: "Wall Decor & Art", href: "#" },
-          { label: "Vases & Vessels", href: "#" },
-          { label: "Candles & Fragrance", href: "#" },
-          { label: "Mirrors", href: "#" },
-        ],
-      },
-      {
-        title: "Lighting",
-        href: "#",
-        items: [
-          { label: "Table Lamps", href: "#" },
-          { label: "Floor Lamps", href: "#" },
-          { label: "Pendants", href: "#" },
-          { label: "Lanterns", href: "#" },
-        ],
-      },
-      {
-        title: "Rugs",
-        href: "#",
-        items: [
-          { label: "Area Rugs", href: "#" },
-          { label: "Runners", href: "#" },
-          { label: "Door Mats", href: "#" },
-        ],
-      },
-    ],
-    featured: {
-      title: "Winter Collection",
-      subtitle: "Refresh your space",
-      href: "#",
-      image:
-        "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=70",
-    },
-  },
-  {
-    label: "Storage & Organization",
-    href: "#storage",
-    columns: [
-      {
-        title: "Closet & Bedroom",
-        href: "#",
-        items: [
-          { label: "Closet Organization", href: "#" },
-          { label: "Drawer Organizers", href: "#" },
-          { label: "Jewelry & Makeup Storage", href: "#" },
-        ],
-      },
-      {
-        title: "Living & Entry",
-        href: "#",
-        items: [
-          { label: "Entryway Organization", href: "#" },
-          { label: "Wall Shelving", href: "#" },
-          { label: "Baskets & Bins", href: "#" },
-          { label: "Storage Furniture", href: "#" },
-        ],
-      },
-      {
-        title: "Office & Desk",
-        href: "#",
-        items: [
-          { label: "Desktop Organizers", href: "#" },
-          { label: "File Storage", href: "#" },
-          { label: "Cable Management", href: "#" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Home & Kitchen",
-    href: "#kitchen",
-    columns: [
-      {
-        title: "Cookware",
-        href: "#",
-        items: [
-          { label: "Pots & Pans", href: "#" },
-          { label: "Bakeware", href: "#" },
-          { label: "Cooking Utensils", href: "#" },
-        ],
-      },
-      {
-        title: "Prep & Tools",
-        href: "#",
-        items: [
-          { label: "Knives & Cutting Boards", href: "#" },
-          { label: "Measuring Tools", href: "#" },
-          { label: "Kitchen Gadgets", href: "#" },
-        ],
-      },
-      {
-        title: "Food Storage",
-        href: "#",
-        items: [
-          { label: "Containers", href: "#" },
-          { label: "Pantry Storage", href: "#" },
-          { label: "Wraps & Bags", href: "#" },
-        ],
-      },
-      {
-        title: "Small Appliances",
-        href: "#",
-        items: [
-          { label: "Coffee & Tea", href: "#" },
-          { label: "Blenders & Mixers", href: "#" },
-          { label: "Toasters", href: "#" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Tabletop & Bar",
-    href: "#tabletop",
-    columns: [
-      {
-        title: "Dinnerware",
-        href: "#",
-        items: [
-          { label: "Plates & Bowls", href: "#" },
-          { label: "Serveware", href: "#" },
-          { label: "Table Linens", href: "#" },
-        ],
-      },
-      {
-        title: "Drinkware",
-        href: "#",
-        items: [
-          { label: "Glassware", href: "#" },
-          { label: "Mugs & Cups", href: "#" },
-          { label: "Water Bottles", href: "#" },
-        ],
-      },
-      {
-        title: "Bar",
-        href: "#",
-        items: [
-          { label: "Bar Tools", href: "#" },
-          { label: "Wine & Beer", href: "#" },
-          { label: "Decanters", href: "#" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Bedding & Bath",
-    href: "#bedding",
-    columns: [
-      {
-        title: "Bedding",
-        href: "#",
-        items: [
-          { label: "Duvet Covers & Sets", href: "#" },
-          { label: "Sheet Sets", href: "#" },
-          { label: "Pillowcases & Shams", href: "#" },
-          { label: "Blankets & Throws", href: "#" },
-        ],
-      },
-      {
-        title: "Bath",
-        href: "#",
-        items: [
-          { label: "Bath Towels", href: "#" },
-          { label: "Robes & Slippers", href: "#" },
-          { label: "Shower Curtains", href: "#" },
-          { label: "Bath Mats", href: "#" },
-        ],
-      },
-      {
-        title: "Bath Accessories",
-        href: "#",
-        items: [
-          { label: "Countertop Accessories", href: "#" },
-          { label: "Bathroom Organizers", href: "#" },
-          { label: "Wastebaskets & Hampers", href: "#" },
-          { label: "Bath Fragrances", href: "#" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "&Kids",
-    href: "#kids",
-    columns: [
-      {
-        title: "Nursery",
-        href: "#",
-        items: [
-          { label: "Bedding", href: "#" },
-          { label: "Decor", href: "#" },
-          { label: "Storage", href: "#" },
-        ],
-      },
-      {
-        title: "Playroom",
-        href: "#",
-        items: [
-          { label: "Toys & Games", href: "#" },
-          { label: "Bookshelves", href: "#" },
-          { label: "Rugs", href: "#" },
-        ],
-      },
-      {
-        title: "Bath & Care",
-        href: "#",
-        items: [
-          { label: "Hooded Towels", href: "#" },
-          { label: "Bath Toys", href: "#" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Beauty & Health",
-    href: "#beauty",
-    columns: [
-      {
-        title: "Beauty",
-        href: "#",
-        items: [
-          { label: "Skincare", href: "#" },
-          { label: "Hair Care", href: "#" },
-          { label: "Makeup Tools", href: "#" },
-        ],
-      },
-      {
-        title: "Wellness",
-        href: "#",
-        items: [
-          { label: "Aromatherapy", href: "#" },
-          { label: "Sleep & Relaxation", href: "#" },
-          { label: "Personal Care", href: "#" },
-        ],
-      },
-    ],
-  },
-  { label: "NEW", href: "#whats-new", badge: "new" },
-  {
-    label: "Brands",
-    href: "#brands",
-    columns: [
-      {
-        title: "Featured Brands",
-        href: "#",
-        items: [
-          { label: "All Brands", href: "#" },
-          { label: "New to Sana Home", href: "#" },
-          { label: "Exclusive Lines", href: "#" },
-        ],
-      },
-    ],
-  },
-];
+const mainCategories: MainCat[] = [];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -284,8 +22,35 @@ export default function Navbar() {
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [factories, setFactories] = useState<{ _id: string; name: string }[]>([]);
+  const [offerText, setOfferText] = useState("");
+  const [shopOpen, setShopOpen] = useState(false);
+  const router = useRouter();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchTerm.trim();
+    router.push(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+  };
+
+  // Load the category list (sana `factory` field) for the Shop dropdown.
+  useEffect(() => {
+    fetch("/api/factory")
+      .then((r) => r.json())
+      .then((d) => setFactories(Array.isArray(d) ? d : []))
+      .catch(() => setFactories([]));
+  }, []);
+
+  // Load the announcement bar text (OfferText collection, single doc).
+  useEffect(() => {
+    fetch("/api/txt")
+      .then((r) => r.json())
+      .then((d) => setOfferText(Array.isArray(d) && d[0]?.text ? d[0].text : ""))
+      .catch(() => setOfferText(""));
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -319,7 +84,7 @@ export default function Navbar() {
       <div className="bg-[var(--accent)] text-[#222]">
         <div className="container-x flex items-center justify-center h-9">
           <p className="text-[0.78rem] md:text-[0.82rem] font-semibold tracking-[0.12em] uppercase text-center">
-            We have delivery on all Lebanon!
+            {offerText}
           </p>
         </div>
       </div>
@@ -331,7 +96,7 @@ export default function Navbar() {
       >
         <div className="container-x flex flex-col items-center gap-4 py-5">
           <a
-            href="#"
+            href="/"
             aria-label="Sana Home"
             className="flex items-center shrink-0"
           >
@@ -344,7 +109,7 @@ export default function Navbar() {
           </a>
 
           <div className="w-full max-w-2xl">
-            <div className="relative">
+            <form onSubmit={submitSearch} className="relative">
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-fg)] pointer-events-none"
                 size={18}
@@ -353,31 +118,86 @@ export default function Navbar() {
               />
               <input
                 type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search for products, brands, categories…"
                 aria-label="Search"
                 className="w-full h-9 pl-11 pr-4 rounded-[var(--radius)] border border-[var(--border)] bg-white text-sm text-[var(--foreground)] placeholder:text-[var(--muted-fg)] outline-none focus:border-[var(--accent)] transition"
               />
-            </div>
+            </form>
           </div>
 
           <div className="w-full border-t border-[#e5e5e5]" />
 
           <nav aria-label="Primary links" className="flex items-center gap-8">
             <a
-              href="#new-arrivals"
+              href="/search?filter=new"
               className="text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
             >
               New Arrivals
             </a>
-            <a
-              href="/shop"
-              className="inline-flex items-center gap-1 text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
+
+            <div
+              className="relative"
+              onMouseEnter={() => {
+                if (shopTimer.current) clearTimeout(shopTimer.current);
+                setShopOpen(true);
+              }}
+              onMouseLeave={() => {
+                if (shopTimer.current) clearTimeout(shopTimer.current);
+                shopTimer.current = setTimeout(() => setShopOpen(false), 180);
+              }}
             >
-              Shop
-              <ChevronDown size={15} strokeWidth={2} aria-hidden="true" />
-            </a>
+              <a
+                href="/shop"
+                className="inline-flex items-center gap-1 text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
+              >
+                Shop
+                <ChevronDown
+                  size={15}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                  className={`transition-transform duration-200 ${shopOpen ? "rotate-180" : ""}`}
+                />
+              </a>
+
+              {/* Categories dropdown */}
+              <div
+                className={`absolute left-1/2 -translate-x-1/2 top-full pt-3 z-50 transition-all duration-200 ${
+                  shopOpen
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 -translate-y-2 pointer-events-none"
+                }`}
+              >
+                <div className="min-w-[230px] bg-white rounded-[var(--radius)] border border-[var(--border)] shadow-[0_25px_50px_-20px_rgba(0,0,0,0.25)] py-2">
+                  <a
+                    href="/shop"
+                    className="block px-5 py-2.5 text-[0.8rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--accent-dark)] transition-colors"
+                  >
+                    All Products
+                  </a>
+                  <div className="my-1 border-t border-[var(--border)]" />
+                  {factories.length === 0 ? (
+                    <span className="block px-5 py-2.5 text-sm text-[var(--muted-fg)]">
+                      Loading…
+                    </span>
+                  ) : (
+                    factories.map((f) => (
+                      <a
+                        key={f._id}
+                        href={`/search?cat=${encodeURIComponent(f.name)}`}
+                        className="block px-5 py-2.5 text-sm capitalize text-[var(--muted-fg)] hover:bg-[var(--surface)] hover:text-[var(--foreground)] hover:translate-x-1 transition-all duration-150"
+                      >
+                        {f.name.toLowerCase()}
+                      </a>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
             <a
-              href="#best-sellers"
+              href="/search?filter=best"
               className="text-[0.82rem] font-semibold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--accent-dark)] transition-colors"
             >
               Best Sellers
@@ -640,7 +460,6 @@ export default function Navbar() {
 
       {/* Full-screen modals */}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <CartModal open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 }

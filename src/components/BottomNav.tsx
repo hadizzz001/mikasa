@@ -3,23 +3,27 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { House, LayoutGrid, ShoppingCart, Heart, User } from "lucide-react";
-import CartModal from "./CartModal";
 import CategoriesModal from "./CategoriesModal";
-import WishlistModal from "./WishlistModal";
 import LoginModal from "./LoginModal";
+import { useCart } from "../context/CartContext";
+import { useCartBool } from "../context/CartBoolContext";
+import { useFav } from "../context/FavContext";
+import { useFavBool } from "../context/FavBoolContext";
 
 type ActiveKey = "home" | "categories" | "cart" | "wishlist" | "account";
 
 export default function BottomNav() {
   const pathname = usePathname();
   const [active, setActive] = useState<ActiveKey>("home");
-  const [cartOpen, setCartOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [wishlistOpen, setWishlistOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const { totalCount } = useCart();
+  const { setCartOpen } = useCartBool();
+  const { favorites } = useFav();
+  const { setFavOpen } = useFavBool();
 
-  // Hide the bottom nav on single product pages, e.g. /product/[slug]
-  const isProductPage = pathname?.startsWith("/product/");
+  // Hide the bottom nav on single product pages, e.g. /product?id=...
+  const isProductPage = pathname?.startsWith("/product");
   if (isProductPage) return null;
 
   // Close every modal, then optionally open one. Ensures only a single
@@ -27,7 +31,7 @@ export default function BottomNav() {
   const openOnly = (key: ActiveKey) => {
     setCartOpen(key === "cart");
     setCategoriesOpen(key === "categories");
-    setWishlistOpen(key === "wishlist");
+    setFavOpen(key === "wishlist");
     setAccountOpen(key === "account");
   };
 
@@ -72,7 +76,14 @@ export default function BottomNav() {
             openOnly("cart");
           }}
         >
-          <ShoppingCart className="bottom-nav__icon" strokeWidth={1.6} />
+          <span className="relative">
+            <ShoppingCart className="bottom-nav__icon" strokeWidth={1.6} />
+            {totalCount > 0 && (
+              <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--accent)] text-black text-[0.55rem] font-bold flex items-center justify-center">
+                {totalCount}
+              </span>
+            )}
+          </span>
           <span className="bottom-nav__label">Cart</span>
         </button>
 
@@ -85,7 +96,14 @@ export default function BottomNav() {
             openOnly("wishlist");
           }}
         >
-          <Heart className="bottom-nav__icon" strokeWidth={1.6} />
+          <span className="relative">
+            <Heart className="bottom-nav__icon" strokeWidth={1.6} />
+            {favorites.length > 0 && (
+              <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--accent)] text-black text-[0.55rem] font-bold flex items-center justify-center">
+                {favorites.length}
+              </span>
+            )}
+          </span>
           <span className="bottom-nav__label">Wishlist</span>
         </button>
 
@@ -103,12 +121,10 @@ export default function BottomNav() {
         </button>
       </nav>
 
-      <CartModal open={cartOpen} onClose={() => setCartOpen(false)} />
       <CategoriesModal
         open={categoriesOpen}
         onClose={() => setCategoriesOpen(false)}
       />
-      <WishlistModal open={wishlistOpen} onClose={() => setWishlistOpen(false)} />
       <LoginModal open={accountOpen} onClose={() => setAccountOpen(false)} />
     </>
   );
