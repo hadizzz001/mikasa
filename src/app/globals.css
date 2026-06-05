@@ -1030,10 +1030,11 @@ color: #ebe3d8 !important;
 .sana-footer__heading-link:hover {
   opacity: 0.8;
 }
-/* Decorative line above the "About Us" heading. */
+/* Render the "About Us" heading as a hypertext link. */
 .sana-footer__heading-link--about {
-  border-top: 2px solid rgba(235, 227, 216, 0.6);
-  padding-top: 0.55rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
 }
 
 .sana-footer__text {
