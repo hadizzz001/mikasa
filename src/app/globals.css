@@ -133,6 +133,93 @@ body {
   letter-spacing: 0;
 }
 
+/* ----- rich-text content (About / Privacy pages, driven by the CMS) ----- */
+.rich-content {
+  color: var(--muted-fg);
+  font-size: 15px;
+  line-height: 1.75;
+}
+.rich-content > :first-child { margin-top: 0; }
+.rich-content > :last-child { margin-bottom: 0; }
+.rich-content h1,
+.rich-content h2,
+.rich-content h3,
+.rich-content h4 {
+  font-family: var(--font-serif), "Raleway", Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--foreground);
+}
+.rich-content h1 {
+  font-size: clamp(1.65rem, 3.5vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  margin: 2.5rem 0 1rem;
+}
+.rich-content h2 {
+  font-size: clamp(1.4rem, 3vw, 1.875rem);
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  margin: 2.25rem 0 1rem;
+}
+.rich-content h3 {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  letter-spacing: 0.15em;
+  margin: 1.75rem 0 0.75rem;
+}
+.rich-content h4 {
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  margin: 1.5rem 0 0.6rem;
+}
+.rich-content p { margin: 0 0 1rem; }
+.rich-content strong { color: var(--foreground); font-weight: 600; }
+.rich-content em { font-style: italic; }
+.rich-content a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rich-content ul,
+.rich-content ol { margin: 1rem 0 1.25rem; padding: 0; }
+.rich-content ul { list-style: none; }
+.rich-content ul > li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.6rem;
+}
+.rich-content ul > li::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: var(--foreground);
+}
+.rich-content ol { padding-left: 1.4rem; }
+.rich-content ol > li { margin-bottom: 0.6rem; }
+.rich-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 1.5rem 0;
+}
+.rich-content hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+.rich-content blockquote {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--border);
+  font-family: var(--font-serif), "Raleway", Arial, Helvetica, sans-serif;
+  font-style: italic;
+  color: var(--foreground);
+}
+.rich-content .ql-align-center { text-align: center; }
+.rich-content .ql-align-right { text-align: right; }
+.rich-content .ql-align-justify { text-align: justify; }
+
 /* ----- announcement marquee ----- */
 .marquee { display: flex; overflow: hidden; user-select: none; }
 .marquee-track {
@@ -942,6 +1029,11 @@ color: #ebe3d8 !important;
 }
 .sana-footer__heading-link:hover {
   opacity: 0.8;
+}
+/* Decorative line above the "About Us" heading. */
+.sana-footer__heading-link--about {
+  border-top: 2px solid rgba(235, 227, 216, 0.6);
+  padding-top: 0.55rem;
 }
 
 .sana-footer__text {

@@ -30,7 +30,10 @@ export default function Footer() {
       <div className="sana-footer__main">
         <div className="container-x sana-footer__top">
           <div className="sana-footer__col">
-            <a href="/about" className="sana-footer__heading-link">
+            <a
+              href="/about"
+              className="sana-footer__heading-link sana-footer__heading-link--about"
+            >
               <h4 className="sana-footer__heading">About Us</h4>
             </a>
             <p className="sana-footer__text">

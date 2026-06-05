@@ -21,10 +21,34 @@ const ralewayDisplay = Raleway({
   weight: ["500", "600", "700", "800"],
 });
 
+const SITE_TITLE = "Sana Home — Home Decor & Accessories | Saida, Lebanon";
+const SITE_DESCRIPTION =
+  "Discover home décor, kitchenware, storage, bedding and bath essentials at Sana Home. Curated collections for a beautifully styled life.";
+// Brand logo hosted on Cloudinary (already whitelisted in next.config.ts).
+const SITE_ICON =
+  "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779535697/WhatsApp_Image_2026-05-23_at_13.45.50-removebg-preview_1_adulnl.png";
+
 export const metadata: Metadata = {
-  title: "Sana Home — Home Decor & Accessories | Beirut, Lebanon",
-  description:
-    "Discover home décor, kitchenware, storage, bedding and bath essentials at Sana Home. Curated collections for a beautifully styled life.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  icons: {
+    icon: SITE_ICON,
+    shortcut: SITE_ICON,
+    apple: SITE_ICON,
+  },
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: "Sana Home",
+    type: "website",
+    images: [{ url: SITE_ICON, alt: "Sana Home" }],
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [SITE_ICON],
+  },
 };
 
 export default function RootLayout({
