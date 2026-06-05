@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { circleCategories } from "../data/categories";
+import { useEffect, useState } from "react";
+
+type CategoryRow = {
+  id?: string;
+  name: string;
+  img?: string[];
+  sort?: number | null;
+};
 
 type Props = {
   open: boolean;
@@ -9,6 +15,29 @@ type Props = {
 };
 
 export default function CategoriesModal({ open, onClose }: Props) {
+  const [cats, setCats] = useState<CategoryRow[]>([]);
+
+  // Load categories from the API and honour the admin-defined sort order.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/category")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: CategoryRow[]) => {
+        if (!active || !Array.isArray(data)) return;
+        setCats(
+          [...data].sort(
+            (a, b) =>
+              (a.sort ?? Number.MAX_SAFE_INTEGER) -
+              (b.sort ?? Number.MAX_SAFE_INTEGER)
+          )
+        );
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -64,15 +93,15 @@ export default function CategoriesModal({ open, onClose }: Props) {
         {/* Body */}
         <div className="container-x flex-1 overflow-y-auto py-6">
           <ul className="max-w-2xl mx-auto divide-y divide-[var(--border)]">
-            {circleCategories.map((c) => (
-              <li key={c.label}>
+            {cats.map((c) => (
+              <li key={c.id ?? c.name}>
                 <a
-                  href={c.href}
+                  href={`/search?cat=${encodeURIComponent(c.name)}`}
                   onClick={onClose}
                   className="flex items-center justify-between py-4 group"
                 >
-                  <span className="text-base font-medium text-[var(--foreground)] group-hover:text-[var(--accent-dark)] transition-colors">
-                    {c.label}
+                  <span className="text-base font-medium capitalize text-[var(--foreground)] group-hover:text-[var(--accent-dark)] transition-colors">
+                    {c.name.toLowerCase()}
                   </span>
                   <svg
                     width="18"

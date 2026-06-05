@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Reveal from "./Reveal";
 
 type BannerRow = {
@@ -41,8 +42,8 @@ export default function Hero() {
     <section id="hero" className="relative w-full bg-white">
       <div className="container-x ">
         <Reveal>
-          <a
-            href="#"
+          <Link
+            href="/shop"
             aria-label={alt}
             className="group block overflow-hidden rounded-[10px]"
           >
@@ -66,7 +67,7 @@ export default function Hero() {
               sizes="100vw"
               className="hidden lg:block w-full h-auto object-contain transition-transform duration-[1200ms] ease-out group-hover:scale-[1.02]"
             />
-          </a>
+          </Link>
         </Reveal>
       </div>
     </section>

@@ -42,7 +42,12 @@ export default function CircleCategories() {
       .then((data: CategoryRow[]) => {
         if (!active || !Array.isArray(data)) return;
         setItems(
-          data
+          [...data]
+            .sort(
+              (a, b) =>
+                (a.sort ?? Number.MAX_SAFE_INTEGER) -
+                (b.sort ?? Number.MAX_SAFE_INTEGER)
+            )
             .filter((c) => c.img?.[0])
             .map((c) => ({
               label: c.name,

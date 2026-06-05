@@ -2,10 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { productImage } from "../lib/cloudinaryQuality";
+import { PLACEHOLDER_IMAGE } from "../lib/productPricing";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+};
+
+type OrderItem = {
+  title?: string;
+  quantity?: number;
+  price?: number;
+  selectedColor?: string;
+  selectedSize?: string;
+  img?: string[];
+};
+
+type OrderDoc = {
+  _id: string;
+  oid: number;
+  userInfo?: OrderItem[];
+  total?: string | number;
+  date?: string;
 };
 
 export default function LoginModal({ open, onClose }: Props) {
@@ -16,6 +35,8 @@ export default function LoginModal({ open, onClose }: Props) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [orders, setOrders] = useState<OrderDoc[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   // Lock body scroll & close on Escape
   useEffect(() => {
@@ -31,6 +52,30 @@ export default function LoginModal({ open, onClose }: Props) {
       window.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
+
+  // Load the signed-in customer's saved orders whenever the panel opens.
+  useEffect(() => {
+    if (!open || !user) {
+      setOrders([]);
+      return;
+    }
+    let active = true;
+    setOrdersLoading(true);
+    fetch(`/api/order?userId=${encodeURIComponent(user._id)}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => {
+        if (active) setOrders(Array.isArray(d) ? d : []);
+      })
+      .catch(() => {
+        if (active) setOrders([]);
+      })
+      .finally(() => {
+        if (active) setOrdersLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [open, user]);
 
   const isLogin = mode === "login";
 
@@ -128,7 +173,7 @@ export default function LoginModal({ open, onClose }: Props) {
 
         {/* Body */}
         <div className="container-x flex-1 overflow-y-auto py-10">
-          <div className="max-w-sm mx-auto w-full">
+          <div className={`${user ? "max-w-2xl" : "max-w-sm"} mx-auto w-full`}>
             <div className="flex flex-col items-center text-center gap-2 mb-8">
               <div className="w-16 h-16 rounded-full bg-[var(--bg-alt,#f7f7f7)] flex items-center justify-center text-[var(--accent-dark)]">
                 <svg
@@ -154,21 +199,101 @@ export default function LoginModal({ open, onClose }: Props) {
 
             {/* Signed-in account panel */}
             {user && (
-              <div className="flex flex-col gap-4">
-                <div className="rounded-md border border-[var(--border)] bg-[var(--bg-alt,#f7f7f7)] px-4 py-3 text-center">
-                  <p className="text-sm font-semibold">{user.name}</p>
-                  <p className="text-xs text-[var(--muted-fg)]">{user.email}</p>
+              <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-4 max-w-sm mx-auto w-full">
+                  <div className="rounded-md border border-[var(--border)] bg-[var(--bg-alt,#f7f7f7)] px-4 py-3 text-center">
+                    <p className="text-sm font-semibold">{user.name}</p>
+                    <p className="text-xs text-[var(--muted-fg)]">{user.email}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setMode("login");
+                    }}
+                    className="btn-primary w-full"
+                  >
+                    Sign Out
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    logout();
-                    setMode("login");
-                  }}
-                  className="btn-primary w-full"
-                >
-                  Sign Out
-                </button>
+
+                {/* Order history */}
+                <div>
+                  <h3 className="text-sm font-bold tracking-[0.2em] uppercase mb-4">
+                    Order History
+                  </h3>
+
+                  {ordersLoading ? (
+                    <div className="space-y-3">
+                      {Array.from({ length: 2 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="h-24 rounded-lg bg-[var(--bg-alt,#f7f7f7)] animate-pulse"
+                        />
+                      ))}
+                    </div>
+                  ) : orders.length === 0 ? (
+                    <p className="text-sm text-[var(--muted-fg)] py-8 text-center border border-dashed border-[var(--border)] rounded-lg">
+                      You haven&apos;t placed any orders yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {orders.map((o) => {
+                        return (
+                          <div
+                            key={o._id}
+                            className="border border-[var(--border)] rounded-lg overflow-hidden"
+                          >
+                            <div className="flex items-center justify-between gap-3 px-4 py-3 bg-[var(--bg-alt,#f7f7f7)]">
+                              <div>
+                                <p className="text-sm font-semibold">Order #{o.oid}</p>
+                                {o.date && (
+                                  <p className="text-xs text-[var(--muted-fg)]">{o.date}</p>
+                                )}
+                              </div>
+                              <span className="text-sm font-semibold">${o.total}</span>
+                            </div>
+
+                            <ul className="divide-y divide-[var(--border)]">
+                              {(o.userInfo || []).map((item, i) => (
+                                <li key={i} className="flex items-center gap-3 px-4 py-3">
+                                  <div className="relative w-12 h-14 shrink-0 rounded-md overflow-hidden bg-[var(--bg-alt,#f7f7f7)]">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={productImage(item.img?.[0] || PLACEHOLDER_IMAGE)}
+                                      alt={item.title || "Product"}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium capitalize line-clamp-1">
+                                      {item.title}
+                                    </p>
+                                    <p className="text-xs text-[var(--muted-fg)]">
+                                      {[item.selectedColor, item.selectedSize]
+                                        .filter(Boolean)
+                                        .join(" \u00b7 ")}
+                                    </p>
+                                  </div>
+                                  <div className="text-right shrink-0">
+                                    <p className="text-xs text-[var(--muted-fg)]">
+                                      Qty {item.quantity}
+                                    </p>
+                                    {typeof item.price === "number" && (
+                                      <p className="text-sm font-semibold">
+                                        ${item.price.toFixed(2)}
+                                      </p>
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 

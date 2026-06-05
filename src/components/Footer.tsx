@@ -3,7 +3,7 @@
 const socials = [
   {
     label: "Facebook",
-    href: "#",
+    href: "https://www.facebook.com/share/1ZUuYmHDAf/",
     icon: (
       <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.25-1.5 1.55-1.5h1.65V4.6c-.3-.04-1.27-.13-2.4-.13-2.37 0-4 1.45-4 4.1v2.32H7.5V14h2.8v8h3.2Z" />
     ),
@@ -83,8 +83,15 @@ export default function Footer() {
       </div>
 
       <div className="sana-footer__bar mb-20">
-        <div className="container-x sana-footer__bar-inner">
+        <div className="container-x sana-footer__bar-inner flex-wrap gap-x-3 gap-y-1">
           <p>© {new Date().getFullYear()} Sana Home. All rights reserved.</p>
+          <span aria-hidden="true">·</span>
+          <a
+            href="/privacy-policy"
+            className="underline underline-offset-4 transition-opacity hover:opacity-100"
+          >
+            Privacy Policy
+          </a>
         </div>
       </div>
     </footer>

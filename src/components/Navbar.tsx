@@ -104,7 +104,7 @@ export default function Navbar() {
             <img
               src="https://res.cloudinary.com/dh2c4clxo/image/upload/v1779535697/WhatsApp_Image_2026-05-23_at_13.45.50-removebg-preview_1_adulnl.png"
               alt="Sana Home"
-              className="h-16 lg:h-20 w-auto object-contain"
+              className="h-16 lg:h-28 w-auto object-contain"
             />
           </a>
 

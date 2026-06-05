@@ -37,7 +37,10 @@ export interface Product {
   sale?: string;
   noprice?: string | boolean;
   factory?: string;
-  category?: string | null;
+  // Products now carry multiple categories (array). Legacy docs may still use a
+  // single string. `sort` controls the admin-defined display order.
+  category?: string[] | string | null;
+  sort?: number | null;
   specs?: { title?: string; items?: { title?: string; value?: string }[] }[];
   // Carried on cart line items:
   quantity?: number;
@@ -61,6 +64,23 @@ export const getColors = (item: Product): ColorEntry[] =>
 
 export const hasNoPrice = (item: Product): boolean =>
   item.noprice === true || item.noprice === "yes" || item.noprice === "true";
+
+/**
+ * The categories a product belongs to. Products now carry a multi-value
+ * `category` array (e.g. ["KITCHEN & DINING", "LIVING ROOM"]); older docs may
+ * use a single string or only the legacy `factory` field, so normalise every
+ * shape into a de-duplicated, non-empty list.
+ */
+export const getCategories = (item: Product): string[] => {
+  const raw = Array.isArray(item.category)
+    ? item.category
+    : item.category
+    ? [item.category]
+    : [];
+  const list = raw.map((c) => String(c).trim()).filter(Boolean);
+  if (list.length === 0 && item.factory) list.push(item.factory);
+  return Array.from(new Set(list));
+};
 
 /** Resolve the colour object to use, falling back to the first one. */
 export function resolveColor(item: Product, colorName?: string): ColorEntry | undefined {

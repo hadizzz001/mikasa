@@ -15,6 +15,7 @@ import {
   type Product,
   type ColorEntry,
   getColors,
+  getCategories,
   getGalleryImages,
   getEffectivePrice,
   getAvailableQty,
@@ -64,12 +65,12 @@ function ProductContent() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Related products from the same category (factory)
+  // Related products from the same categories (multi-category aware).
   useEffect(() => {
     if (!product) return;
     const params = new URLSearchParams();
     params.set("limit", "8");
-    if (product.factory) params.append("cat", product.factory);
+    getCategories(product).forEach((c) => params.append("cat", c));
     fetch(`/api/productsz1?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {

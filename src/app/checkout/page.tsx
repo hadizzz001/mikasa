@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart, lineKeyOf, type CartLine } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 import { productImage } from "../../lib/cloudinaryQuality";
 import {
   getFirstImage,
@@ -14,7 +15,9 @@ import {
 } from "../../lib/productPricing";
 
 const WHATSAPP_NUMBER = "96181543771";
-const DELIVERY_FEE = 5;
+// Delivery is cheaper for the local city (Sidon); every other city pays more.
+const DELIVERY_FEE_SIDON = 3;
+const DELIVERY_FEE_OTHER = 6;
 
 const LEBANON_CITIES = [
   "Beirut", "Tripoli", "Sidon", "Tyre", "Jounieh", "Zahle", "Baalbek",
@@ -46,6 +49,7 @@ interface Offer {
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, subtotal, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { user } = useAuth();
 
   const [inputs, setInputs] = useState<Inputs>(emptyInputs);
   const [promo, setPromo] = useState("");
@@ -74,6 +78,12 @@ export default function CheckoutPage() {
     };
   }, []);
 
+  // Prefill the email for signed-in customers (their order is also linked to
+  // their profile via the user id sent with the order).
+  useEffect(() => {
+    if (user?.email) setInputs((p) => (p.email ? p : { ...p, email: user.email }));
+  }, [user]);
+
   const discount = useMemo(() => {
     if (!appliedOffer) return 0;
     const per = num(appliedOffer.per);
@@ -83,8 +93,11 @@ export default function CheckoutPage() {
   // Waive delivery once the order subtotal reaches the free-shipping threshold.
   const qualifiesFreeShip =
     freeShipThreshold !== null && subtotal >= freeShipThreshold;
+  // Sidon ships at the discounted local rate; all other cities pay the standard fee.
+  const baseDeliveryFee =
+    inputs.city === "Sidon" ? DELIVERY_FEE_SIDON : DELIVERY_FEE_OTHER;
   const deliveryFee =
-    cart.length === 0 || qualifiesFreeShip ? 0 : DELIVERY_FEE;
+    cart.length === 0 || qualifiesFreeShip ? 0 : baseDeliveryFee;
 
   const total = Math.max(0, subtotal - discount) + deliveryFee;
 
@@ -219,6 +232,9 @@ Delivery fee: ${deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : "FREE"}
           total: total.toFixed(2),
           delivery: deliveryFee,
           code: appliedOffer?.code || "",
+          userId: user?._id,
+          userEmail: user?.email,
+          userName: user?.name,
         }),
       });
       const data = await res.json();

@@ -171,11 +171,29 @@ export async function GET(req: Request) {
     }
 
     const total = await collection.countDocuments(query);
+    // Order by the admin-defined product `sort` (ascending). Products without a
+    // `sort` value fall to the end, newest-first as a sensible default.
+    const SORT_LAST = Number.MAX_SAFE_INTEGER;
     const data = await collection
-      .find(query)
-      .sort({ _id: -1 })
-      .skip(skip)
-      .limit(limit)
+      .aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            _sortKey: {
+              $convert: {
+                input: "$sort",
+                to: "double",
+                onError: SORT_LAST,
+                onNull: SORT_LAST,
+              },
+            },
+          },
+        },
+        { $sort: { _sortKey: 1, _id: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        { $project: { _sortKey: 0 } },
+      ])
       .toArray();
 
     return NextResponse.json({
