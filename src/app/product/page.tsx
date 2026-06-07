@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Heart, ChevronRight, Minus, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, Minus, Plus } from "lucide-react";
 import CarCard from "../../components/CarCard";
 import QuantitySelector from "../../components/QuantitySelector";
 import OutOfStock from "../../components/OutOfStock";
@@ -25,6 +25,39 @@ import {
   num,
   money,
 } from "../../lib/productPricing";
+
+// Unified pointer-based swipe (works for finger on mobile and mouse on desktop).
+function useSwipe(onPrev: () => void, onNext: () => void) {
+  const startX = useRef<number | null>(null);
+  const moved = useRef(false);
+  const SWIPE_THRESHOLD = 40; // px to count as a swipe
+  const MOVE_TOLERANCE = 8; // px before we consider it a drag (suppress click)
+
+  const handlers = {
+    onPointerDown: (e: React.PointerEvent) => {
+      startX.current = e.clientX;
+      moved.current = false;
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      if (startX.current === null) return;
+      if (Math.abs(e.clientX - startX.current) > MOVE_TOLERANCE) moved.current = true;
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      if (startX.current === null) return;
+      const dx = e.clientX - startX.current;
+      startX.current = null;
+      if (Math.abs(dx) > SWIPE_THRESHOLD) {
+        if (dx < 0) onNext();
+        else onPrev();
+      }
+    },
+    onPointerCancel: () => {
+      startX.current = null;
+    },
+  };
+
+  return { handlers, moved };
+}
 
 function ProductContent() {
   const router = useRouter();
@@ -127,6 +160,31 @@ function ProductContent() {
     setSelectedSize(firstReal ?? colors[idx]?.sizes?.[0]?.size ?? "");
   };
 
+  const galleryLen = gallery.length;
+  const goPrev = useCallback(
+    () => setActiveImg((i) => (galleryLen ? (i - 1 + galleryLen) % galleryLen : 0)),
+    [galleryLen]
+  );
+  const goNext = useCallback(
+    () => setActiveImg((i) => (galleryLen ? (i + 1) % galleryLen : 0)),
+    [galleryLen]
+  );
+
+  const mainSwipe = useSwipe(goPrev, goNext);
+  const zoomSwipe = useSwipe(goPrev, goNext);
+
+  // Keyboard navigation while the zoom lightbox is open.
+  useEffect(() => {
+    if (!zoom) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goPrev();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "Escape") setZoom(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [zoom, goPrev, goNext]);
+
   const handleAdd = () => {
     if (!product || outOfStock) return;
     if (variantsMode && hasRealSizes && !selectedSize) return;
@@ -183,20 +241,57 @@ function ProductContent() {
               </div>
             )}
             <div
-              className="relative flex-1 rounded-lg overflow-hidden bg-[#f6f4f0] cursor-zoom-in"
-              style={{ aspectRatio: "1 / 1" }}
-              onClick={() => setZoom(true)}
+              className="relative flex-1 rounded-lg overflow-hidden bg-[#f6f4f0] cursor-zoom-in select-none"
+              style={{ aspectRatio: "1 / 1", touchAction: "pan-y" }}
+              onClick={() => {
+                if (mainSwipe.moved.current) {
+                  mainSwipe.moved.current = false;
+                  return;
+                }
+                setZoom(true);
+              }}
+              {...mainSwipe.handlers}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={productImage(gallery[activeImg] || gallery[0])}
                 alt={product.title}
-                className="w-full h-full object-cover object-center"
+                draggable={false}
+                className="w-full h-full object-cover object-center pointer-events-none"
               />
               {outOfStock && (
                 <div className="absolute top-4 left-4 px-3 py-1 bg-black/70 text-white text-xs font-bold uppercase tracking-wide rounded">
                   Out of Stock
                 </div>
+              )}
+              {gallery.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goPrev();
+                    }}
+                    aria-label="Previous image"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-[var(--foreground)]/70 hover:text-[var(--foreground)] transition-colors"
+                  >
+                    <ChevronLeft size={22} strokeWidth={1.25} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goNext();
+                    }}
+                    aria-label="Next image"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-[var(--foreground)]/70 hover:text-[var(--foreground)] transition-colors"
+                  >
+                    <ChevronRight size={22} strokeWidth={1.25} />
+                  </button>
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[var(--foreground)]/60 text-[11px] tracking-wide">
+                    {activeImg + 1} / {gallery.length}
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -404,10 +499,46 @@ function ProductContent() {
           <img
             src={gallery[activeImg] || gallery[0]}
             alt={product.title}
-            className="max-w-full max-h-full object-contain"
+            draggable={false}
+            className="max-w-full max-h-full object-contain select-none"
+            style={{ touchAction: "none" }}
+            onClick={(e) => e.stopPropagation()}
+            {...zoomSwipe.handlers}
           />
+          {gallery.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goPrev();
+                }}
+                aria-label="Previous image"
+                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors"
+              >
+                <ChevronLeft size={28} strokeWidth={1.25} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goNext();
+                }}
+                aria-label="Next image"
+                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors"
+              >
+                <ChevronRight size={28} strokeWidth={1.25} />
+              </button>
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/70 text-xs tracking-widest">
+                {activeImg + 1} / {gallery.length}
+              </div>
+            </>
+          )}
           <button
-            onClick={() => setZoom(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setZoom(false);
+            }}
             className="absolute top-5 right-5 text-white"
             aria-label="Close"
           >

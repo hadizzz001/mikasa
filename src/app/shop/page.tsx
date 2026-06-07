@@ -2,10 +2,10 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SlidersHorizontal } from "lucide-react";
+import { Loader2, SlidersHorizontal } from "lucide-react";
 import CarCard from "../../components/CarCard";
-import Pagination from "../../components/Pagination";
 import type { Product } from "../../lib/productPricing";
+import { useInfiniteList } from "../../lib/useInfiniteList";
 
 interface Factory {
   _id: string;
@@ -20,15 +20,24 @@ function ShopContent() {
   const searchParams = useSearchParams();
 
   const [factories, setFactories] = useState<Factory[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const selectedCats = searchParams.getAll("cat");
   const filter = searchParams.get("filter") || "";
-  const page = parseInt(searchParams.get("page") || "1", 10);
+
+  // The serialized URL params double as the cache key for the infinite list —
+  // any filter change produces a new key and triggers a fresh load.
+  const queryKey = searchParams.toString();
+
+  const {
+    items: products,
+    loading,
+    loadingMore,
+    hasMore,
+    totalItems,
+    sentinelRef,
+    loadMore,
+  } = useInfiniteList<Product>("/api/productsz1", queryKey, LIMIT);
 
   // Sidebar categories
   useEffect(() => {
@@ -38,40 +47,15 @@ function ShopContent() {
       .catch(() => setFactories([]));
   }, []);
 
-  // Product listing
-  useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.set("page", String(page));
-    params.set("limit", String(LIMIT));
-    selectedCats.forEach((c) => params.append("cat", c));
-    if (filter) params.set("filter", filter);
-
-    fetch(`/api/productsz1?${params.toString()}`)
-      .then((r) => r.json())
-      .then((d) => {
-        setProducts(d.products || []);
-        setTotalPages(d.totalPages || 1);
-        setTotalItems(d.totalItems || 0);
-      })
-      .catch(() => {
-        setProducts([]);
-        setTotalPages(1);
-      })
-      .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.toString()]);
-
   const updateUrl = useCallback(
-    (next: { cat?: string[]; filter?: string | null; page?: number }) => {
+    (next: { cat?: string[]; filter?: string | null }) => {
       const params = new URLSearchParams();
       const cats = next.cat ?? selectedCats;
       cats.forEach((c) => params.append("cat", c));
       const f = next.filter !== undefined ? next.filter : filter;
       if (f) params.set("filter", f);
-      const p = next.page ?? 1;
-      if (p > 1) params.set("page", String(p));
-      router.push(`/shop?${params.toString()}`);
+      const qs = params.toString();
+      router.push(qs ? `/shop?${qs}` : "/shop");
     },
     [router, selectedCats, filter]
   );
@@ -80,11 +64,11 @@ function ShopContent() {
     const set = new Set(selectedCats);
     if (set.has(name)) set.delete(name);
     else set.add(name);
-    updateUrl({ cat: Array.from(set), page: 1 });
+    updateUrl({ cat: Array.from(set) });
   };
 
   const setFilter = (f: string) => {
-    updateUrl({ filter: filter === f ? null : f, page: 1 });
+    updateUrl({ filter: filter === f ? null : f });
   };
 
   const Sidebar = (
@@ -187,14 +171,36 @@ function ShopContent() {
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-8">
                 {products.map((p) => (
-                  <CarCard key={p._id} temp={p} />
+                  <CarCard key={p._id} temp={p} showNewBadge={false} showBestSellerBadge={false} />
                 ))}
               </div>
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onChange={(p) => updateUrl({ page: p })}
-              />
+
+              {/* Sentinel — observed by useInfiniteList to auto-load on scroll. */}
+              <div ref={sentinelRef} aria-hidden="true" className="h-px w-full mt-8" />
+
+              {loadingMore && (
+                <div className="flex items-center justify-center gap-2 py-8 text-sm text-[var(--muted-fg)]">
+                  <Loader2 size={18} className="animate-spin" />
+                  <span>Loading more…</span>
+                </div>
+              )}
+
+              {!loadingMore && hasMore && (
+                <div className="flex justify-center py-6">
+                  <button
+                    onClick={loadMore}
+                    className="text-xs font-bold tracking-[0.2em] uppercase border border-[var(--border)] hover:border-[var(--accent)] px-6 py-3 rounded-md transition"
+                  >
+                    Load more
+                  </button>
+                </div>
+              )}
+
+              {!hasMore && !loadingMore && products.length >= LIMIT && (
+                <p className="py-8 text-center text-xs uppercase tracking-[0.2em] text-[var(--muted-fg)]">
+                  You&rsquo;ve reached the end
+                </p>
+              )}
             </>
           )}
         </div>

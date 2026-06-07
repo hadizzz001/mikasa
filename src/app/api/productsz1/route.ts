@@ -74,8 +74,50 @@ export async function GET(req: Request) {
 
     if (filter === "new") {
       query.arrival = "yes";
-    } else if (filter === "best" || filter === "sale") {
+    } else if (filter === "best") {
+      // Best sellers: the admin-curated `sale === "yes"` flag (kept as the
+      // historical "featured" marker for highlighted products).
       query.sale = "yes";
+    } else if (filter === "sale") {
+      // True "on sale" items only: at least one real discount where
+      //   discount > 0 AND discount < price
+      // — matching the same definition used by getDisplayPrice() on the
+      // client (see lib/productPricing.ts). Handles both single products
+      // (top-level price/discount) and collections (color[].sizes[]).
+      const num = (field: string) => ({
+        $convert: { input: field, to: "double", onError: 0, onNull: 0 },
+      });
+      const topOnSale = {
+        $let: {
+          vars: { pr: num("$price"), ds: num("$discount") },
+          in: { $and: [{ $gt: ["$$ds", 0] }, { $lt: ["$$ds", "$$pr"] }] },
+        },
+      };
+      const anySizeOnSale = {
+        $anyElementTrue: {
+          $map: {
+            input: {
+              $reduce: {
+                input: { $ifNull: ["$color", []] },
+                initialValue: [],
+                in: {
+                  $concatArrays: ["$$value", { $ifNull: ["$$this.sizes", []] }],
+                },
+              },
+            },
+            as: "s",
+            in: {
+              $let: {
+                vars: { pr: num("$$s.price"), ds: num("$$s.discount") },
+                in: {
+                  $and: [{ $gt: ["$$ds", 0] }, { $lt: ["$$ds", "$$pr"] }],
+                },
+              },
+            },
+          },
+        },
+      };
+      and.push({ $expr: { $or: [topOnSale, anySizeOnSale] } });
     }
 
     // Offer filter: keep products whose effective (sellable) price is below the

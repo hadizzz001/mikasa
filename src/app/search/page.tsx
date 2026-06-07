@@ -1,15 +1,15 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import CarCard from "../../components/CarCard";
-import Pagination from "../../components/Pagination";
 import type { Product } from "../../lib/productPricing";
+import { useInfiniteList } from "../../lib/useInfiniteList";
 
 const LIMIT = 12;
 
 function SearchContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const q = searchParams.get("q") || "";
@@ -17,50 +17,20 @@ function SearchContent() {
   const filter = searchParams.get("filter") || "";
   const minoff = searchParams.get("minoff") || "";
   const pct = searchParams.get("pct") || "";
-  const page = parseInt(searchParams.get("page") || "1", 10);
   const hasCriteria = !!q || cats.length > 0 || !!filter || !!minoff || !!pct;
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(true);
+  // Serialized URL params double as the cache key for the infinite list.
+  const queryKey = searchParams.toString();
 
-  useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.set("page", String(page));
-    params.set("limit", String(LIMIT));
-    if (q) params.set("q", q);
-    cats.forEach((c) => params.append("cat", c));
-    if (filter) params.set("filter", filter);
-    if (minoff) params.set("minoff", minoff);
-    if (pct) params.set("pct", pct);
-
-    fetch(`/api/productsz1?${params.toString()}`)
-      .then((r) => r.json())
-      .then((d) => {
-        setProducts(d.products || []);
-        setTotalPages(d.totalPages || 1);
-        setTotalItems(d.totalItems || 0);
-      })
-      .catch(() => {
-        setProducts([]);
-        setTotalPages(1);
-      })
-      .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.toString()]);
-
-  const goPage = (p: number) => {
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    cats.forEach((c) => params.append("cat", c));
-    if (filter) params.set("filter", filter);
-    if (minoff) params.set("minoff", minoff);
-    if (pct) params.set("pct", pct);
-    if (p > 1) params.set("page", String(p));
-    router.push(`/search?${params.toString()}`);
-  };
+  const {
+    items: products,
+    loading,
+    loadingMore,
+    hasMore,
+    totalItems,
+    sentinelRef,
+    loadMore,
+  } = useInfiniteList<Product>("/api/productsz1", queryKey, LIMIT);
 
   return (
     <div className="container-x py-10 lg:py-14">
@@ -95,10 +65,41 @@ function SearchContent() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8">
             {products.map((p) => (
-              <CarCard key={p._id} temp={p} />
+              <CarCard
+                key={p._id}
+                temp={p}
+                showNewBadge={cats.length === 0 && !minoff && filter !== "best" && filter !== "sale"}
+                showBestSellerBadge={cats.length === 0 && !minoff && filter !== "new"}
+              />
             ))}
           </div>
-          <Pagination currentPage={page} totalPages={totalPages} onChange={goPage} />
+
+          {/* Sentinel — observed by useInfiniteList to auto-load on scroll. */}
+          <div ref={sentinelRef} aria-hidden="true" className="h-px w-full mt-8" />
+
+          {loadingMore && (
+            <div className="flex items-center justify-center gap-2 py-8 text-sm text-[var(--muted-fg)]">
+              <Loader2 size={18} className="animate-spin" />
+              <span>Loading more…</span>
+            </div>
+          )}
+
+          {!loadingMore && hasMore && (
+            <div className="flex justify-center py-6">
+              <button
+                onClick={loadMore}
+                className="text-xs font-bold tracking-[0.2em] uppercase border border-[var(--border)] hover:border-[var(--accent)] px-6 py-3 rounded-md transition"
+              >
+                Load more
+              </button>
+            </div>
+          )}
+
+          {!hasMore && !loadingMore && products.length >= LIMIT && (
+            <p className="py-8 text-center text-xs uppercase tracking-[0.2em] text-[var(--muted-fg)]">
+              You&rsquo;ve reached the end
+            </p>
+          )}
         </>
       )}
     </div>

@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { useFav } from "../context/FavContext";
-import { useCart } from "../context/CartContext";
-import { useCartBool } from "../context/CartBoolContext";
 import { productImage } from "../lib/cloudinaryQuality";
 import {
   type Product,
@@ -14,48 +11,31 @@ import {
   getSecondImage,
   getDisplayPrice,
   isProductOutOfStock,
-  hasVariants,
   hasNoPrice,
   money,
 } from "../lib/productPricing";
 
-export default function CarCard({ temp }: { temp: Product }) {
-  const { _id, title, type } = temp;
+export default function CarCard({
+  temp,
+  showNewBadge = true,
+  showBestSellerBadge = true,
+}: {
+  temp: Product;
+  showNewBadge?: boolean;
+  showBestSellerBadge?: boolean;
+}) {
+  const { _id, title } = temp;
   const [hovered, setHovered] = useState(false);
   const { isFav, toggleFav } = useFav();
-  const { addToCart, cart } = useCart();
-  const { setCartOpen } = useCartBool();
-  const router = useRouter();
 
   const favorited = isFav(_id);
   const firstImg = getFirstImage(temp);
   const hoverImg = getSecondImage(temp);
   const outOfStock = isProductOutOfStock(temp);
-  const isCollection = hasVariants(temp) || type === "collection";
-  const inCart = Array.isArray(cart) && cart.some((c) => c._id === _id);
 
   const { price, original, onSale } = getDisplayPrice(temp);
   const discountPercent =
     onSale && original > 0 ? Math.round(((original - price) / original) * 100) : 0;
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (outOfStock) return;
-
-    // Already in the cart → straight to checkout.
-    if (inCart) {
-      router.push("/checkout");
-      return;
-    }
-    // Collection products need a colour/size choice → go to the product page.
-    if (isCollection) {
-      router.push(`/product?id=${_id}`);
-      return;
-    }
-    addToCart(temp, 1);
-    setCartOpen(true);
-  };
 
   return (
     <Link href={`/product?id=${_id}`} className="group block">
@@ -82,14 +62,19 @@ export default function CarCard({ temp }: { temp: Product }) {
           />
 
           {/* Badges */}
-          <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
-            {temp.arrival === "yes" && (
-              <span className="px-2 py-0.5 text-[0.6rem] font-bold tracking-widest uppercase bg-[var(--accent)] text-black rounded">
+          <div className="absolute top-2.5 left-2.5 z-20 flex flex-col gap-1 items-start">
+            {showNewBadge && temp.arrival === "yes" && (
+              <span className="px-1.5 py-px text-[9px] font-semibold tracking-[0.12em] uppercase bg-[var(--accent)] text-black">
                 New
               </span>
             )}
+            {showBestSellerBadge && temp.sale === "yes" && (
+              <span className="px-1.5 py-px text-[9px] font-semibold tracking-[0.12em] uppercase bg-[var(--accent)] text-black">
+                Best Seller
+              </span>
+            )}
             {discountPercent > 0 && (
-              <span className="px-2 py-0.5 text-[0.6rem] font-bold tracking-widest uppercase bg-black text-white rounded">
+              <span className="px-1.5 py-px text-[9px] font-semibold tracking-[0.12em] uppercase bg-black text-white">
                 -{discountPercent}%
               </span>
             )}
@@ -113,22 +98,6 @@ export default function CarCard({ temp }: { temp: Product }) {
             <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center text-base font-bold tracking-wider uppercase z-10">
               Out of Stock
             </div>
-          )}
-
-          {/* Add to cart (slides up on hover) */}
-          {!outOfStock && (
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              className="absolute left-3 right-3 bottom-3 z-[15] py-2.5 bg-white text-black text-xs font-semibold uppercase tracking-[0.08em] rounded-md transition-all duration-300"
-              style={{
-                opacity: hovered ? 1 : 0,
-                transform: hovered ? "translateY(0)" : "translateY(8px)",
-                pointerEvents: hovered ? "auto" : "none",
-              }}
-            >
-              {inCart ? "Checkout Now" : isCollection ? "Choose Options" : "Add to Cart"}
-            </button>
           )}
         </div>
 
