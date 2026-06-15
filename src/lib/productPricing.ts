@@ -1,5 +1,5 @@
-// Centralised, sana-specific product helpers shared by the storefront pages,
-// the product card and the cart context. The sana data model differs from the
+// Centralised, mikasa-specific product helpers shared by the storefront pages,
+// the product card and the cart context. The mikasa data model differs from the
 // reference project: products are either `single` (top-level price/stock) or
 // `collection` (a `color[]` array, each colour holding a nested `sizes[]`).
 
@@ -49,7 +49,7 @@ export interface Product {
 }
 
 export const PLACEHOLDER_IMAGE =
-  "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779535697/WhatsApp_Image_2026-05-23_at_13.45.50-removebg-preview_1_adulnl.png";
+  "https://res.cloudinary.com/drznxpxbg/image/upload/v1781537946/571336519_838731755331159_2614331528625636359_n-removebg-preview_acuhj2.png";
 
 export const num = (v: unknown): number => {
   const n = parseFloat(String(v ?? ""));

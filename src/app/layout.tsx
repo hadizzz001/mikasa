@@ -21,12 +21,12 @@ const ralewayDisplay = Raleway({
   weight: ["500", "600", "700", "800"],
 });
 
-const SITE_TITLE = "Sana Home — Home Decor & Accessories | Saida, Lebanon";
+const SITE_TITLE = "Mikasa Home — Home Decor & Accessories | Beirut, Lebanon";
 const SITE_DESCRIPTION =
-  "Discover home décor, kitchenware, storage, bedding and bath essentials at Sana Home. Curated collections for a beautifully styled life.";
+  "Discover home décor, kitchenware, storage, bedding and bath essentials at Mikasa Home. Curated collections for a beautifully styled life.";
 // Brand logo hosted on Cloudinary (already whitelisted in next.config.ts).
 const SITE_ICON =
-  "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779535697/WhatsApp_Image_2026-05-23_at_13.45.50-removebg-preview_1_adulnl.png";
+  "https://res.cloudinary.com/drznxpxbg/image/upload/v1781537946/571336519_838731755331159_2614331528625636359_n-removebg-preview_acuhj2.png";
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    siteName: "Sana Home",
+    siteName: "Mikasa Home",
     type: "website",
-    images: [{ url: SITE_ICON, alt: "Sana Home" }],
+    images: [{ url: SITE_ICON, alt: "Mikasa Home" }],
   },
   twitter: {
     card: "summary",
@@ -69,7 +69,7 @@ export default function RootLayout({
           <TrustBadges />
           <Footer />
           <a
-            href="https://wa.me/96181543771"
+            href="https://wa.me/96176987808"
             className="sana-whatsapp-button"
             aria-label="Chat with us on WhatsApp"
             target="_blank"

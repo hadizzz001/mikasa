@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import PrivacyContent from "./PrivacyContent";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Sana Home",
+  title: "Privacy Policy — Mikasa Home",
   description:
-    "Sana Home delivery, returns and exchange policy. Local delivery across Lebanon with same-day delivery in Sidon, plus our return & exchange terms.",
+    "Mikasa Home delivery, returns and exchange policy. Local delivery across Lebanon with same-day delivery in Beirut, plus our return & exchange terms.",
 };
 
 export default function PrivacyPolicyPage() {

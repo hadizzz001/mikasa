@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Reveal from "./Reveal";
+import { bannerImage } from "../lib/cloudinaryQuality";
 
 type Props = {
   id?: string;
@@ -31,7 +32,7 @@ export default function CollectionBanner({
   return (
     <section id={id} className="relative w-full">
       <div className="relative h-[60vh] min-h-[420px] max-h-[640px] w-full overflow-hidden">
-        <Image src={img} alt={alt} fill className="object-cover" sizes="100vw" />
+        <Image src={bannerImage(img)} alt={alt} fill className="object-cover" sizes="100vw" />
         <div className={`absolute inset-0 ${dark ? "banner-overlay-dark" : "banner-overlay-light"}`} />
         <div className="absolute inset-0">
           <div className={`container-x h-full flex items-center ${justify}`}>

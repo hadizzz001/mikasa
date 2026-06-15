@@ -5,9 +5,9 @@
   --background: #ffffff;
   --foreground: #282828;       /* --wd-title-color */
   --muted-fg: #666666;         /* --wd-text-color */
-  --accent: #ebe3d8;           /* warm gold */
-  --accent-dark: #ebe3d8;
-  --accent-light: #ebe3d8;
+  --accent: #bea553;           /* warm gold */
+  --accent-dark: #bea553;
+  --accent-light: #bea553;
   --surface: #efefef;          /* used as section bg on the reference site */
   --surface-2: #f6f2ee;
   --dark: #282828;             /* --wd-primary-color */
@@ -546,7 +546,7 @@ body {
 
 
 .mynavnewnavnavnav {
-color: #ebe3d8 !important;
+color: #bea553 !important;
 }
 
 /* ===== Circle categories row (under main banner) ===== */
@@ -765,7 +765,7 @@ color: #ebe3d8 !important;
   align-items: center;
   text-align: center;
   color: #ffffff;
-  background: linear-gradient(135deg, #ebe3d8 0%, #e6b86a 55%, #ebe3d8 100%);
+  background: linear-gradient(135deg, #bea553 0%, #e6b86a 55%, #bea553 100%);
   /* Organic blob shape */
   border-radius: 62% 38% 55% 45% / 50% 60% 40% 50%;
   box-shadow:
@@ -904,7 +904,7 @@ color: #ebe3d8 !important;
 
 /* ===== Trust badges (above footer) ===== */
 .trust-badges {
-  background: #ebe3d8;
+  background: #bea553;
   color: #222222;
 }
 .trust-badges__list {
@@ -987,8 +987,8 @@ color: #ebe3d8 !important;
 /* ===== Footer — dark background, minimal style ===== */
 .sana-footer {
   background: #222;
-  color: #ebe3d8;
-  border-top: 1px solid rgba(235, 227, 216, 0.15);
+  color: #bea553;
+  border-top: 1px solid rgba(190, 165, 83, 0.15);
 }
 
 .sana-footer__top {
@@ -1019,7 +1019,7 @@ color: #ebe3d8 !important;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #ebe3d8;
+  color: #bea553;
   margin: 0 0 0.7rem;
 }
 .sana-footer__heading-link {
@@ -1072,7 +1072,7 @@ color: #ebe3d8 !important;
   padding-bottom: 2rem;
   padding-left: 1.25rem !important;
   padding-right: 1.25rem !important;
-  border-top: 1px solid rgba(235, 227, 216, 0.15);
+  border-top: 1px solid rgba(190, 165, 83, 0.15);
   width: 100%;
   max-width: 1100px;
   margin-left: auto;
@@ -1139,13 +1139,13 @@ color: #ebe3d8 !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #ebe3d8;
+  color: #bea553;
   background: none;
   border: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .sana-footer__social svg {
-  fill: #ebe3d8;
+  fill: #bea553;
   width: 30px;
   height: 30px;
 }
@@ -1156,7 +1156,7 @@ color: #ebe3d8 !important;
 
 /* Bottom bar */
 .sana-footer__bar {
-  border-top: 1px solid rgba(235, 227, 216, 0.15);
+  border-top: 1px solid rgba(190, 165, 83, 0.15);
   background: #222;
 }
 .sana-footer__bar-inner {
@@ -1166,7 +1166,7 @@ color: #ebe3d8 !important;
   padding-bottom: 1.25rem;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #ebe3d8;
+  color: #bea553;
   opacity: 0.8;
   text-align: center;
 }
@@ -1184,12 +1184,12 @@ color: #ebe3d8 !important;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  background: #ebe3d8; 
+  background: #bea553; 
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 .sana-whatsapp-button:hover {
   transform: translateY(-3px) scale(1.04);
-  background: #ebe3d8;
+  background: #bea553;
   box-shadow: 0 18px 36px -12px rgba(212, 173, 98, 0.9);
 }
 .sana-whatsapp-button:focus-visible {

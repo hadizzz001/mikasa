@@ -1,7 +1,7 @@
 "use client";
 
 // WhatsApp pre-order prompt shown when an item is out of stock.
-const WHATSAPP_NUMBER = "96181543771";
+const WHATSAPP_NUMBER = "96176987808";
 
 export default function OutOfStock({ itemName }: { itemName?: string }) {
   const message = `I want to preorder this item: ${itemName || ""}`.trim();

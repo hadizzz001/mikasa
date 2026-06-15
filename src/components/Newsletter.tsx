@@ -1,8 +1,11 @@
 "use client";
 
 import Reveal from "./Reveal";
+import { bannerImage } from "../lib/cloudinaryQuality";
 
-const BG = "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779552818/newsletter_uxjzif.webp";
+const BG = bannerImage(
+  "https://res.cloudinary.com/dh2c4clxo/image/upload/v1779552818/newsletter_uxjzif.webp"
+);
 
 export default function Newsletter() {
   return (

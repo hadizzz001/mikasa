@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Reveal from "./Reveal";
+import { categoryImage } from "../lib/cloudinaryQuality";
 
 type Card = {
   label: string;
@@ -82,7 +83,7 @@ function CardItem({
       className={`group relative block overflow-hidden rounded-[var(--radius)] ${className}`}
     >
       <Image
-        src={card.src}
+        src={categoryImage(card.src)}
         alt={card.label}
         fill
         sizes={sizes}

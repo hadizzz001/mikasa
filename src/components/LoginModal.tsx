@@ -192,8 +192,8 @@ export default function LoginModal({ open, onClose }: Props) {
                 {user
                   ? `Signed in as ${user.email}`
                   : isLogin
-                  ? "Welcome back. Sign in to your Sana Home account."
-                  : "Join Sana Home to save your favourites and track orders."}
+                  ? "Welcome back. Sign in to your Mikasa Home account."
+                  : "Join Mikasa Home to save your favourites and track orders."}
               </p>
             </div>
 

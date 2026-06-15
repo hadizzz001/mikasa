@@ -3,7 +3,8 @@ import Hero1 from "../components/Hero1";
 import Hero2 from "../components/Hero2";
 import CircleCategories from "../components/CircleCategories";
 import PromoSlider from "../components/PromoSlider";
- 
+import CategoryProductRows from "../components/CategoryProductRows";
+
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <Hero />
       <CircleCategories />
       <PromoSlider /> 
+      <CategoryProductRows />
       <Hero1 />
       <Hero2 />
     </div>

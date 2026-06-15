@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, ChevronDown } from "lucide-react";
 import SearchModal from "./SearchModal";
+import { defaultImage } from "../lib/cloudinaryQuality";
 
 type SubColumn = { title: string; href: string; items: { label: string; href: string }[] };
 type MainCat = {
@@ -97,14 +98,16 @@ export default function Navbar() {
         <div className="container-x flex flex-col items-center gap-4 py-5">
           <a
             href="/"
-            aria-label="Sana Home"
+            aria-label="Mikasa Home"
             className="flex items-center shrink-0"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="https://res.cloudinary.com/dh2c4clxo/image/upload/v1779535697/WhatsApp_Image_2026-05-23_at_13.45.50-removebg-preview_1_adulnl.png"
-              alt="Sana Home"
-              className="h-16 lg:h-28 w-auto object-contain"
+              src={defaultImage(
+                "https://res.cloudinary.com/drznxpxbg/image/upload/v1781537946/571336519_838731755331159_2614331528625636359_n-removebg-preview_acuhj2.png"
+              )}
+              alt="Mikasa Home"
+              className="h-24 lg:h-40 w-auto object-contain"
             />
           </a>
 
@@ -299,7 +302,7 @@ export default function Navbar() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={c.featured.image}
+                        src={defaultImage(c.featured.image)}
                         alt={c.featured.title}
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
@@ -344,7 +347,7 @@ export default function Navbar() {
         />
         {/* Panel */}
         <aside
-          className={`absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-[#ebe3d8] text-white shadow-2xl flex flex-col transition-transform duration-300 ${
+          className={`absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-[#bea553] text-white shadow-2xl flex flex-col transition-transform duration-300 ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -391,7 +394,7 @@ export default function Navbar() {
                       <span className="flex items-center gap-2">
                         {c.label}
                         {c.badge === "new" && (
-                          <span className="px-1.5 py-0.5 text-[0.55rem] font-bold tracking-widest bg-white text-[#ebe3d8] rounded">
+                          <span className="px-1.5 py-0.5 text-[0.55rem] font-bold tracking-widest bg-white text-[#bea553] rounded">
                             NEW
                           </span>
                         )}

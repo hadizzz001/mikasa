@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Reveal from "./Reveal";
+import { categoryImage } from "../lib/cloudinaryQuality";
 
 type Cat = { label: string; img: string };
 
@@ -20,7 +21,7 @@ export default function CategoryGrid({
           <a href="#" className="category-card group">
             <div className="thumb">
               <Image
-                src={c.img}
+                src={categoryImage(c.img)}
                 alt={c.label}
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"

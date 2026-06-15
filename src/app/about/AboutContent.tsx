@@ -67,7 +67,7 @@ export default function AboutContent() {
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[10px] bg-[var(--surface-2)] sm:aspect-[16/9]">
               <Image
                 src={image}
-                alt="Sana Home"
+                alt="Mikasa Home"
                 fill
                 sizes="(min-width: 1024px) 56rem, 100vw"
                 className="object-cover"

@@ -14,9 +14,9 @@ import {
   money,
 } from "../../lib/productPricing";
 
-const WHATSAPP_NUMBER = "96181543771";
-// Delivery is cheaper for the local city (Sidon); every other city pays more.
-const DELIVERY_FEE_SIDON = 3;
+const WHATSAPP_NUMBER = "96176987808";
+// Delivery is cheaper for the local city (Beirut); every other city pays more.
+const DELIVERY_FEE_BEIRUT = 3;
 const DELIVERY_FEE_OTHER = 6;
 
 const LEBANON_CITIES = [
@@ -93,9 +93,9 @@ export default function CheckoutPage() {
   // Waive delivery once the order subtotal reaches the free-shipping threshold.
   const qualifiesFreeShip =
     freeShipThreshold !== null && subtotal >= freeShipThreshold;
-  // Sidon ships at the discounted local rate; all other cities pay the standard fee.
+  // Beirut ships at the discounted local rate; all other cities pay the standard fee.
   const baseDeliveryFee =
-    inputs.city === "Sidon" ? DELIVERY_FEE_SIDON : DELIVERY_FEE_OTHER;
+    inputs.city === "Beirut" ? DELIVERY_FEE_BEIRUT : DELIVERY_FEE_OTHER;
   const deliveryFee =
     cart.length === 0 || qualifiesFreeShip ? 0 : baseDeliveryFee;
 
