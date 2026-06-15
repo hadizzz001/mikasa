@@ -52,7 +52,7 @@ export default function Footer() {
             </a>
             <ul className="sana-footer__contact">
               <li>Address: Beirut, Lebanon</li>
-              <li>Phone: +961 81 543 771</li>
+              <li>Phone: +961 76 987 808</li>
               <li>
                 Email:{" "}
                 <a href="mailto:sales.mikasahome@gmail.com">
