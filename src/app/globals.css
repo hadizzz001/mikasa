@@ -33,7 +33,7 @@
   --font-serif: var(--font-serif, "Playfair Display", Georgia, serif);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto; }
 
 body {
   background: var(--background);
@@ -414,8 +414,8 @@ body {
 .product-card .price { font-weight: 600; color: var(--foreground); }
 .product-card .stock { font-size: 0.72rem; color: #5b9d65; letter-spacing: 0.05em; }
 
-/* ----- reveal-on-scroll ----- */
-.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+/* ----- reveal wrapper (animation removed — always visible) ----- */
+.reveal { opacity: 1; transform: none; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
 /* ----- banner overlay ----- */
@@ -1301,4 +1301,66 @@ color: #bea553 !important;
 /* Reserve space so fixed footers/content aren't hidden behind the nav */
 body {
   padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ===================================================================
+   Motion removed site-wide
+   -------------------------------------------------------------------
+   Entrance/scroll animations and the always-running keyframes (marquee,
+   decor blob) were making the site feel laggy and left content invisible
+   until JS ran. Everything now renders in its final state instantly.
+   Colours, layout and hover STATES are untouched — only the movement
+   between them is gone.
+   =================================================================== */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* --- Exception: loading indicators must keep playing --- */
+/* Class selectors beat the universal rule above, so these still animate. */
+@keyframes sana-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes sana-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+.animate-spin {
+  animation: sana-spin 1s linear infinite !important;
+}
+.animate-pulse {
+  animation: sana-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+/* ===== Global loading indicator (components/PageLoader.tsx) =====
+   Sits in the corner while data is being fetched — the page stays visible. */
+.page-loader {
+  position: fixed;
+  left: 18px;
+  bottom: calc(18px + 62px + env(safe-area-inset-bottom, 0px));
+  z-index: 96;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.page-loader__spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  border: 2px solid rgba(190, 165, 83, 0.25);
+  border-top-color: #bea553;
+  animation: sana-spin 0.8s linear infinite !important;
 }

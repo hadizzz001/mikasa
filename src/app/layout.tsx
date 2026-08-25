@@ -7,6 +7,7 @@ import BottomNav from "../components/BottomNav";
 import BackButton from "../components/BackButton";
 import TrustBadges from "../components/TrustBadges";
 import Providers from "../components/Providers";
+import PageLoader from "../components/PageLoader";
 
 // Mirror site uses Raleway as both body and title font (woodmart theme defaults).
 const raleway = Raleway({
@@ -86,6 +87,7 @@ export default function RootLayout({
             </svg>
           </a>
           <BottomNav />
+          <PageLoader />
         </Providers>
       </body>
     </html>
