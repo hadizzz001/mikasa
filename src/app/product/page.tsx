@@ -11,6 +11,7 @@ import { useCart, lineKeyOf } from "../../context/CartContext";
 import { useCartBool } from "../../context/CartBoolContext";
 import { useFav } from "../../context/FavContext";
 import { productImage } from "../../lib/cloudinaryQuality";
+import { getJson } from "../../lib/apiFetch";
 import {
   type Product,
   type ColorEntry,
@@ -83,8 +84,7 @@ function ProductContent() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetch(`/api/products/${id}`)
-      .then((r) => r.json())
+    getJson<Product | Product[]>(`/api/products/${id}`)
       .then((d) => {
         const p = Array.isArray(d) ? d[0] : d;
         setProduct(p || null);
@@ -94,7 +94,6 @@ function ProductContent() {
         const colors = p ? getColors(p) : [];
         setSelectedSize(colors[0]?.sizes?.[0]?.size ?? "");
       })
-      .catch(() => setProduct(null))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -104,13 +103,12 @@ function ProductContent() {
     const params = new URLSearchParams();
     params.set("limit", "8");
     getCategories(product).forEach((c) => params.append("cat", c));
-    fetch(`/api/productsz1?${params.toString()}`)
-      .then((r) => r.json())
-      .then((d) => {
-        const list: Product[] = (d.products || []).filter((p: Product) => p._id !== product._id);
-        setRelated(list.slice(0, 4));
-      })
-      .catch(() => setRelated([]));
+    getJson<{ products?: Product[] }>(`/api/productsz1?${params.toString()}`).then((d) => {
+      const list: Product[] = (d?.products || []).filter(
+        (p: Product) => p._id !== product._id
+      );
+      setRelated(list.slice(0, 4));
+    });
   }, [product]);
 
   const colors = product ? getColors(product) : [];

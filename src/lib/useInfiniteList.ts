@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getJson } from "./apiFetch";
 
 // Shared infinite-scroll loader for paginated product listings.
 //
@@ -83,31 +84,19 @@ export function useInfiniteList<T>(
     params.set("page", "1");
     params.set("limit", String(limit));
 
-    fetch(`${endpoint}?${params.toString()}`)
-      .then((r) => r.json() as Promise<PaginatedResponse<T>>)
-      .then((d) => {
-        if (reqId !== reqIdRef.current) return;
-        setLoadingMore(false);
-        setData({
-          key: queryKey,
-          items: d.products || [],
-          page: 1,
-          hasMore: !!d.hasMore,
-          totalItems: d.totalItems || 0,
-        });
-      })
-      .catch((err: unknown) => {
-        if (reqId !== reqIdRef.current) return;
-        console.warn("[useInfiniteList] initial load failed:", err);
-        setLoadingMore(false);
-        setData({
-          key: queryKey,
-          items: [],
-          page: 1,
-          hasMore: false,
-          totalItems: 0,
-        });
+    // getJson retries a couple of times before returning null, so a single
+    // failed request no longer empties the listing.
+    getJson<PaginatedResponse<T>>(`${endpoint}?${params.toString()}`).then((d) => {
+      if (reqId !== reqIdRef.current) return;
+      setLoadingMore(false);
+      setData({
+        key: queryKey,
+        items: d?.products || [],
+        page: 1,
+        hasMore: !!d?.hasMore,
+        totalItems: d?.totalItems || 0,
       });
+    });
   }, [endpoint, queryKey, limit]);
 
   // Derived view state — only data that matches the current query counts.
@@ -133,10 +122,11 @@ export function useInfiniteList<T>(
     params.set("page", String(next));
     params.set("limit", String(limit));
 
-    fetch(`${endpoint}?${params.toString()}`)
-      .then((r) => r.json() as Promise<PaginatedResponse<T>>)
+    getJson<PaginatedResponse<T>>(`${endpoint}?${params.toString()}`)
       .then((d) => {
         if (reqId !== reqIdRef.current) return;
+        // A failed page keeps `hasMore` so the sentinel can try again.
+        if (!d) return;
         setData((prev) => {
           if (!prev) return prev;
           return {
@@ -146,10 +136,6 @@ export function useInfiniteList<T>(
             hasMore: !!d.hasMore,
           };
         });
-      })
-      .catch((err: unknown) => {
-        if (reqId !== reqIdRef.current) return;
-        console.warn("[useInfiniteList] load more failed:", err);
       })
       .finally(() => {
         // Always clear the in-flight flag even for stale responses, otherwise

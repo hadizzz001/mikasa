@@ -6,6 +6,7 @@ import { Loader2, SlidersHorizontal } from "lucide-react";
 import CarCard from "../../components/CarCard";
 import type { Product } from "../../lib/productPricing";
 import { useInfiniteList } from "../../lib/useInfiniteList";
+import { getJson } from "../../lib/apiFetch";
 
 interface Factory {
   _id: string;
@@ -41,10 +42,9 @@ function ShopContent() {
 
   // Sidebar categories
   useEffect(() => {
-    fetch("/api/factory")
-      .then((r) => r.json())
-      .then((d) => setFactories(Array.isArray(d) ? d : []))
-      .catch(() => setFactories([]));
+    getJson<Factory[]>("/api/factory").then((d) =>
+      setFactories(Array.isArray(d) ? d : [])
+    );
   }, []);
 
   const updateUrl = useCallback(

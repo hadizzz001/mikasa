@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { productImage } from "../lib/cloudinaryQuality";
 import { PLACEHOLDER_IMAGE } from "../lib/productPricing";
+import { getJson } from "../lib/apiFetch";
 
 type Props = {
   open: boolean;
@@ -61,13 +62,9 @@ export default function LoginModal({ open, onClose }: Props) {
     }
     let active = true;
     setOrdersLoading(true);
-    fetch(`/api/order?userId=${encodeURIComponent(user._id)}`)
-      .then((r) => (r.ok ? r.json() : []))
+    getJson<OrderDoc[]>(`/api/order?userId=${encodeURIComponent(user._id)}`)
       .then((d) => {
         if (active) setOrders(Array.isArray(d) ? d : []);
-      })
-      .catch(() => {
-        if (active) setOrders([]);
       })
       .finally(() => {
         if (active) setOrdersLoading(false);

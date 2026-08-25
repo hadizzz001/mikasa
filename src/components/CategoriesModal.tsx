@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getJson } from "../lib/apiFetch";
 
 type CategoryRow = {
   id?: string;
@@ -20,19 +21,16 @@ export default function CategoriesModal({ open, onClose }: Props) {
   // Load categories from the API and honour the admin-defined sort order.
   useEffect(() => {
     let active = true;
-    fetch("/api/category")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data: CategoryRow[]) => {
-        if (!active || !Array.isArray(data)) return;
-        setCats(
-          [...data].sort(
-            (a, b) =>
-              (a.sort ?? Number.MAX_SAFE_INTEGER) -
-              (b.sort ?? Number.MAX_SAFE_INTEGER)
-          )
-        );
-      })
-      .catch(() => {});
+    getJson<CategoryRow[]>("/api/category").then((data) => {
+      if (!active || !Array.isArray(data)) return;
+      setCats(
+        [...data].sort(
+          (a, b) =>
+            (a.sort ?? Number.MAX_SAFE_INTEGER) -
+            (b.sort ?? Number.MAX_SAFE_INTEGER)
+        )
+      );
+    });
     return () => {
       active = false;
     };

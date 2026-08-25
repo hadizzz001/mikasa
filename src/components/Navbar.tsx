@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getJson } from "../lib/apiFetch";
 import { Search, ChevronDown } from "lucide-react";
 import SearchModal from "./SearchModal";
 import { defaultImage } from "../lib/cloudinaryQuality";
@@ -39,18 +40,16 @@ export default function Navbar() {
 
   // Load the category list (sana `factory` field) for the Shop dropdown.
   useEffect(() => {
-    fetch("/api/factory")
-      .then((r) => r.json())
-      .then((d) => setFactories(Array.isArray(d) ? d : []))
-      .catch(() => setFactories([]));
+    getJson<{ _id: string; name: string }[]>("/api/factory").then((d) =>
+      setFactories(Array.isArray(d) ? d : [])
+    );
   }, []);
 
   // Load the announcement bar text (OfferText collection, single doc).
   useEffect(() => {
-    fetch("/api/txt")
-      .then((r) => r.json())
-      .then((d) => setOfferText(Array.isArray(d) && d[0]?.text ? d[0].text : ""))
-      .catch(() => setOfferText(""));
+    getJson<{ text?: string }[]>("/api/txt").then((d) =>
+      setOfferText(Array.isArray(d) && d[0]?.text ? d[0].text : "")
+    );
   }, []);
 
   useEffect(() => {

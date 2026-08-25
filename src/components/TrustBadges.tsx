@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Truck, Undo2, ShieldCheck, Headphones } from "lucide-react";
 import { optimizeImage } from "../lib/cloudinaryQuality";
+import { getJson } from "../lib/apiFetch";
 
 type Section = {
   _id: string;
@@ -43,16 +44,11 @@ export default function TrustBadges() {
   const [sections, setSections] = useState<Section[]>([]);
 
   useEffect(() => {
-    fetch("/api/section")
-      .then((r) => r.json())
-      .then((d) => {
-        if (Array.isArray(d) && d.length > 0) {
-          setSections([...d].sort((a, b) => (a.order || 0) - (b.order || 0)));
-        }
-      })
-      .catch(() => {
-        setSections([]);
-      });
+    getJson<Section[]>("/api/section").then((d) => {
+      if (Array.isArray(d) && d.length > 0) {
+        setSections([...d].sort((a, b) => (a.order || 0) - (b.order || 0)));
+      }
+    });
   }, []);
 
   return (

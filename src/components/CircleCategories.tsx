@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Reveal from "./Reveal";
+import { getJson } from "../lib/apiFetch";
 
 type CircleCat = {
   label: string;
@@ -37,10 +38,8 @@ export default function CircleCategories() {
   // Load categories (image + title) from the API.
   useEffect(() => {
     let active = true;
-    fetch("/api/category")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: CategoryRow[]) => {
-        if (!active || !Array.isArray(data)) return;
+    getJson<CategoryRow[]>("/api/category").then((data) => {
+      if (!active || !Array.isArray(data)) return;
         setItems(
           [...data]
             .sort(
@@ -54,9 +53,8 @@ export default function CircleCategories() {
               href: `/search?cat=${encodeURIComponent(c.name)}`,
               src: c.img[0],
             }))
-        );
-      })
-      .catch(() => {});
+      );
+    });
     return () => {
       active = false;
     };
@@ -172,14 +170,17 @@ export default function CircleCategories() {
           <div className="cat-slider">
             <div className="cat-slider__viewport" ref={viewportRef}>
               <ul
-                className="cat-slider__track"
+                // `is-instant` (drag + silent recenter) must beat the slide
+                // transition in CSS, so it is a class rather than an inline style.
+                className={`cat-slider__track${
+                  dragging || !animate ? " is-instant" : ""
+                }`}
                 onPointerDown={onPointerDown}
                 onClickCapture={onClickCapture}
                 style={{
                   transform: dragging
                     ? `translateX(calc(-${offset}% + ${dragPx}px))`
                     : `translateX(-${offset}%)`,
-                  transition: dragging || !animate ? "none" : undefined,
                   cursor: dragging ? "grabbing" : "grab",
                   touchAction: "pan-y",
                 }}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getJson } from "../../lib/apiFetch";
 import Image from "next/image";
 import Reveal from "../../components/Reveal";
 import { cleanRichHtml } from "../../lib/richText";
@@ -17,12 +18,10 @@ export default function AboutContent() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/about")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: AboutDoc[]) => {
+    getJson<AboutDoc[]>("/api/about")
+      .then((data) => {
         if (active && Array.isArray(data) && data.length) setDoc(data[0]);
       })
-      .catch(() => {})
       .finally(() => {
         if (active) setLoaded(true);
       });

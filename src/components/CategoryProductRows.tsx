@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Reveal from "./Reveal";
+import { getJson } from "../lib/apiFetch";
 import CarCard from "./CarCard";
 import type { Product } from "../lib/productPricing";
 
@@ -50,8 +51,7 @@ export default function CategoryProductRows() {
 
     (async () => {
       try {
-        const res = await fetch("/api/category");
-        const cats: CategoryRow[] = res.ok ? await res.json() : [];
+        const cats = (await getJson<CategoryRow[]>("/api/category")) ?? [];
         if (!active || !Array.isArray(cats) || cats.length === 0) {
           if (active) setLoading(false);
           return;
@@ -61,12 +61,11 @@ export default function CategoryProductRows() {
         const settled = await Promise.all(
           cats.map(async (cat) => {
             try {
-              const r = await fetch(
+              const data = await getJson<{ products?: Product[] }>(
                 `/api/productsz1?cat=${encodeURIComponent(
                   cat.name
                 )}&page=1&limit=${PER_CATEGORY}`
               );
-              const data = r.ok ? await r.json() : null;
               const products: Product[] = Array.isArray(data?.products)
                 ? data.products
                 : [];

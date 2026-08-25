@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getJson } from "../../lib/apiFetch";
 import Reveal from "../../components/Reveal";
 import { cleanRichHtml } from "../../lib/richText";
 
@@ -15,12 +16,10 @@ export default function PrivacyContent() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/privacy")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: PrivacyDoc[]) => {
+    getJson<PrivacyDoc[]>("/api/privacy")
+      .then((data) => {
         if (active && Array.isArray(data) && data.length) setDoc(data[0]);
       })
-      .catch(() => {})
       .finally(() => {
         if (active) setLoaded(true);
       });

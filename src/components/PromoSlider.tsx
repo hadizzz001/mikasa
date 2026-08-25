@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { getJson } from "../lib/apiFetch";
 
 type Promo = {
   src: string;
@@ -69,21 +70,18 @@ export default function PromoSlider() {
   // Load the OtherBanner rows from the API.
   useEffect(() => {
     let active = true;
-    fetch("/api/otherbanner")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: OtherBannerRow[]) => {
-        if (!active || !Array.isArray(data)) return;
-        setPromos(
-          data
-            .filter((b) => b.img?.[0])
-            .map((b) => ({
-              src: b.img[0],
-              alt: bannerLabel(b.key),
-              href: bannerHref(b.key, b.percentage),
-            }))
-        );
-      })
-      .catch(() => {});
+    getJson<OtherBannerRow[]>("/api/otherbanner").then((data) => {
+      if (!active || !Array.isArray(data)) return;
+      setPromos(
+        data
+          .filter((b) => b.img?.[0])
+          .map((b) => ({
+            src: b.img[0],
+            alt: bannerLabel(b.key),
+            href: bannerHref(b.key, b.percentage),
+          }))
+      );
+    });
     return () => {
       active = false;
     };
@@ -198,7 +196,11 @@ export default function PromoSlider() {
       <div className="container-x">
         <div className="promo-slider__viewport" ref={viewportRef}>
           <div
-            className="promo-slider__track"
+            // `is-instant` (drag + silent recenter) must beat the slide
+            // transition in CSS, so it is a class rather than an inline style.
+            className={`promo-slider__track${
+              dragging || !animate ? " is-instant" : ""
+            }`}
             onPointerDown={onPointerDown}
             onClickCapture={onClickCapture}
             style={{
@@ -206,7 +208,6 @@ export default function PromoSlider() {
               transform: dragging
                 ? `translateX(calc(-${offset}% + ${dragPx}px))`
                 : `translateX(-${offset}%)`,
-              transition: dragging || !animate ? "none" : undefined,
               cursor: dragging ? "grabbing" : "grab",
               touchAction: "pan-y",
             }}

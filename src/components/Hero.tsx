@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "./Reveal";
+import { getJson } from "../lib/apiFetch";
 
 type BannerRow = {
   id: string;
@@ -17,12 +18,9 @@ export default function Hero() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/banner")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: BannerRow[]) => {
-        if (active && Array.isArray(data) && data.length) setBanner(data[0]);
-      })
-      .catch(() => {});
+    getJson<BannerRow[]>("/api/banner").then((data) => {
+      if (active && Array.isArray(data) && data.length) setBanner(data[0]);
+    });
     return () => {
       active = false;
     };

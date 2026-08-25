@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCart, lineKeyOf, type CartLine } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { productImage } from "../../lib/cloudinaryQuality";
+import { getJson } from "../../lib/apiFetch";
 import {
   getFirstImage,
   getEffectivePrice,
@@ -64,15 +65,12 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/section")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((d: { order?: number; value?: string | null }[]) => {
-        if (!active || !Array.isArray(d)) return;
-        const first = d.find((s) => s.order === 1) ?? d[0];
-        const val = num(first?.value);
-        setFreeShipThreshold(val > 0 ? val : null);
-      })
-      .catch(() => {});
+    getJson<{ order?: number; value?: string | null }[]>("/api/section").then((d) => {
+      if (!active || !Array.isArray(d)) return;
+      const first = d.find((s) => s.order === 1) ?? d[0];
+      const val = num(first?.value);
+      setFreeShipThreshold(val > 0 ? val : null);
+    });
     return () => {
       active = false;
     };
@@ -107,8 +105,7 @@ export default function CheckoutPage() {
     const code = promo.trim();
     if (!code) return;
     try {
-      const res = await fetch("/api/offer");
-      const offers: Offer[] = await res.json();
+      const offers = (await getJson<Offer[]>("/api/offer")) ?? [];
       const match = Array.isArray(offers)
         ? offers.find((o) => String(o.code).toLowerCase() === code.toLowerCase())
         : null;
