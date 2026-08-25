@@ -905,7 +905,7 @@ color: #bea553 !important;
 /* ===== Trust badges (above footer) ===== */
 .trust-badges {
   background: #bea553;
-  color: #222222;
+  color: #ffffff !important;
 }
 .trust-badges__list {
   list-style: none;
@@ -928,7 +928,7 @@ color: #bea553 !important;
   transform: translateY(-50%);
   width: 1px;
   height: 60%;
-  background: rgba(34, 34, 34, 0.15);
+  background: rgba(255, 255, 255, 0.35);
 }
 .trust-badges__content {
   display: flex;
@@ -937,7 +937,7 @@ color: #bea553 !important;
   text-align: center;
   gap: 0.5rem;
   padding: 0 1rem;
-  color: #222222;
+  color: #ffffff !important;
 }
 .trust-badges__content--link {
   cursor: pointer;
@@ -948,18 +948,24 @@ color: #bea553 !important;
   opacity: 0.85;
 }
 .trust-badges__icon {
-  color: #222222;
+  color: #ffffff !important;
   display: inline-flex;
+}
+/* Icon uploaded through the Section collection (api/section -> img[0]) */
+.trust-badges__icon-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
 }
 .trust-badges__title {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #222222;
+  color: #ffffff !important;
 }
 .trust-badges__subtitle {
   font-size: 0.72rem;
-  color: #222222;
+  color: #ffffff !important;
   opacity: 0.8;
 }
 /* Keep all 4 in a single row on mobile too */
@@ -971,7 +977,8 @@ color: #bea553 !important;
     padding: 0 0.4rem;
     gap: 0.35rem;
   }
-  .trust-badges__icon svg {
+  .trust-badges__icon svg,
+  .trust-badges__icon-img {
     width: 24px;
     height: 24px;
   }
@@ -982,6 +989,20 @@ color: #bea553 !important;
   .trust-badges__subtitle {
     font-size: 0.5rem;
   }
+}
+
+/* Force every bit of text/iconography in the trust badges to white */
+.trust-badges,
+.trust-badges a,
+.trust-badges p,
+.trust-badges span,
+.trust-badges li,
+.trust-badges div,
+.trust-badges svg {
+  color: #ffffff !important;
+}
+.trust-badges svg {
+  stroke: currentColor;
 }
 
 /* ===== Footer — dark background, minimal style ===== */

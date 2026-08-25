@@ -82,7 +82,7 @@ export default function Navbar() {
 
   return (
     <header className="relative z-50 w-full">
-      <div className="bg-[var(--accent)] text-[#222]">
+      <div className="bg-[var(--accent)] text-white">
         <div className="container-x flex items-center justify-center h-9">
           <p className="text-[0.78rem] md:text-[0.82rem] font-semibold tracking-[0.12em] uppercase text-center">
             {offerText}
