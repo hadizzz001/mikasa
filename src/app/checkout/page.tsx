@@ -10,15 +10,15 @@ import { getJson } from "../../lib/apiFetch";
 import {
   getFirstImage,
   getEffectivePrice,
-  hasVariants,
+  getAvailableQty,
   num,
   money,
 } from "../../lib/productPricing";
 
 const WHATSAPP_NUMBER = "96176987808";
-// Delivery is cheaper for the local city (Beirut); every other city pays more.
-const DELIVERY_FEE_BEIRUT = 3;
-const DELIVERY_FEE_OTHER = 6;
+// Delivery fee is configured from the dashboard (/api/delivery-fee).
+// This is only used until the value loads / if none has been set.
+const DEFAULT_DELIVERY_FEE = 3;
 
 const LEBANON_CITIES = [
   "Beirut", "Tripoli", "Sidon", "Tyre", "Jounieh", "Zahle", "Baalbek",
@@ -62,6 +62,25 @@ export default function CheckoutPage() {
   // Free-shipping threshold sourced from the first trust-badge section
   // ("FREE SHIPPING", value = order amount in USD). null = no free shipping.
   const [freeShipThreshold, setFreeShipThreshold] = useState<number | null>(null);
+  // Delivery fee managed from the dashboard.
+  const [configDeliveryFee, setConfigDeliveryFee] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getJson<{ fee?: string | number }[] | { fee?: string | number }>("/api/delivery-fee").then(
+      (d) => {
+        if (!active || !d) return;
+        const doc = Array.isArray(d) ? d[0] : d;
+        const val = num(doc?.fee);
+        if (val >= 0 && doc?.fee !== undefined && doc?.fee !== null && doc?.fee !== "") {
+          setConfigDeliveryFee(val);
+        }
+      }
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -91,9 +110,9 @@ export default function CheckoutPage() {
   // Waive delivery once the order subtotal reaches the free-shipping threshold.
   const qualifiesFreeShip =
     freeShipThreshold !== null && subtotal >= freeShipThreshold;
-  // Beirut ships at the discounted local rate; all other cities pay the standard fee.
+  // Flat delivery fee coming from the dashboard setting.
   const baseDeliveryFee =
-    inputs.city === "Beirut" ? DELIVERY_FEE_BEIRUT : DELIVERY_FEE_OTHER;
+    configDeliveryFee !== null ? configDeliveryFee : DEFAULT_DELIVERY_FEE;
   const deliveryFee =
     cart.length === 0 || qualifiesFreeShip ? 0 : baseDeliveryFee;
 
@@ -353,7 +372,9 @@ Delivery fee: ${deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : "FREE"}
             {cart.map((item: CartLine) => {
               const key = lineKeyOf(item);
               const { price } = getEffectivePrice(item, item.selectedColor, item.selectedSize);
-              const max = item.stockEnabled && hasVariants(item) ? undefined : undefined;
+              const max = item.stockEnabled
+                ? getAvailableQty(item, item.selectedColor, item.selectedSize)
+                : Infinity;
               return (
                 <div key={key} className="flex gap-3">
                   <div className="relative w-16 h-20 shrink-0 rounded-md overflow-hidden bg-white">
@@ -376,7 +397,7 @@ Delivery fee: ${deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : "FREE"}
                       <div className="inline-flex items-center border border-[var(--border)] rounded text-xs">
                         <button onClick={() => updateQuantity(key, item.quantity - 1)} disabled={item.quantity <= 1} className="w-6 h-6 disabled:opacity-40">−</button>
                         <span className="w-6 text-center">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(key, item.quantity + 1)} className="w-6 h-6" disabled={max !== undefined && item.quantity >= max}>+</button>
+                        <button onClick={() => updateQuantity(key, item.quantity + 1)} className="w-6 h-6 disabled:opacity-40" disabled={item.quantity >= max}>+</button>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold">{money(price * item.quantity)}</span>
