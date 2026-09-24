@@ -9,7 +9,7 @@ import { AUTH_STORAGE_KEY, type AuthUser } from "../context/AuthContext";
 import { getCategories, getEffectivePrice, type Product } from "./productPricing";
 
 // Set NEXT_PUBLIC_META_PIXEL_ID to override, or to an empty string to disable.
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "1878344353619091";
+export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "1650172650229435";
 
 const CURRENCY = "USD";
 const FBEVENTS_SRC = "https://connect.facebook.net/en_US/fbevents.js";
