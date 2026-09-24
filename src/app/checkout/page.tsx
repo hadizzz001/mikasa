@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart, lineKeyOf, type CartLine } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { productImage } from "../../lib/cloudinaryQuality";
 import { getJson } from "../../lib/apiFetch";
+import { cartParams, track } from "../../lib/metaPixel";
 import {
   getFirstImage,
   getEffectivePrice,
@@ -64,6 +65,14 @@ export default function CheckoutPage() {
   const [freeShipThreshold, setFreeShipThreshold] = useState<number | null>(null);
   // Delivery fee managed from the dashboard.
   const [configDeliveryFee, setConfigDeliveryFee] = useState<number | null>(null);
+
+  // Once per checkout visit, as soon as the cart is known.
+  const checkoutTracked = useRef(false);
+  useEffect(() => {
+    if (checkoutTracked.current || cart.length === 0) return;
+    checkoutTracked.current = true;
+    track("InitiateCheckout", cartParams(cart));
+  }, [cart]);
 
   useEffect(() => {
     let active = true;
@@ -254,6 +263,15 @@ Delivery fee: ${deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : "FREE"}
         }),
       });
       const data = await res.json();
+
+      if (res.ok) {
+        // Order id doubles as the event id so a repeat can't double count revenue.
+        track(
+          "Purchase",
+          { ...cartParams(cart), value: Number(total.toFixed(2)), order_id: data.oid },
+          data.oid ? `order-${data.oid}` : undefined
+        );
+      }
 
       // Open WhatsApp with the order summary.
       window.open(buildWhatsAppUrl(items), "_blank");

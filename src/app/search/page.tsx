@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import CarCard from "../../components/CarCard";
 import type { Product } from "../../lib/productPricing";
 import { useInfiniteList } from "../../lib/useInfiniteList";
+import { track } from "../../lib/metaPixel";
 
 const LIMIT = 12;
 
@@ -18,6 +19,13 @@ function SearchContent() {
   const minoff = searchParams.get("minoff") || "";
   const pct = searchParams.get("pct") || "";
   const hasCriteria = !!q || cats.length > 0 || !!filter || !!minoff || !!pct;
+
+  const lastSearch = useRef("");
+  useEffect(() => {
+    if (!q || q === lastSearch.current) return;
+    lastSearch.current = q;
+    track("Search", { search_string: q });
+  }, [q]);
 
   // Serialized URL params double as the cache key for the infinite list.
   const queryKey = searchParams.toString();

@@ -22,7 +22,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 // localStorage key holding the signed-in user so access survives reloads.
-const STORAGE_KEY = "sana_user";
+export const AUTH_STORAGE_KEY = "sana_user";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // hydration mismatches).
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(AUTH_STORAGE_KEY);
       if (stored) setUser(JSON.parse(stored) as AuthUser);
     } catch {
       /* ignore corrupt storage */
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = (u: AuthUser) => {
     setUser(u);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(u));
     } catch {
       /* storage may be unavailable */
     }
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     setUser(null);
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
     } catch {
       /* storage may be unavailable */
     }

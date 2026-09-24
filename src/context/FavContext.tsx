@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import type { Product } from "../lib/productPricing";
+import { productParams, track } from "../lib/metaPixel";
 
 type FavAction =
   | { type: "ADD_TO_FAV"; payload: Product }
@@ -48,7 +49,12 @@ export const FavProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [favorites]);
 
-  const addToFav = (product: Product) => dispatch({ type: "ADD_TO_FAV", payload: product });
+  const addToFav = (product: Product) => {
+    if (!favorites.some((item) => item._id === product._id)) {
+      track("AddToWishlist", productParams(product));
+    }
+    dispatch({ type: "ADD_TO_FAV", payload: product });
+  };
   const removeFromFav = (productId: string) =>
     dispatch({ type: "REMOVE_FROM_FAV", payload: productId });
   const isFav = (productId: string) => favorites.some((item) => item._id === productId);

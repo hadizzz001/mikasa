@@ -16,6 +16,7 @@ export default function OutOfStock({ itemName }: { itemName?: string }) {
         href={link}
         target="_blank"
         rel="noopener noreferrer"
+        data-pixel-label={`Preorder: ${itemName || ""}`.trim()}
         className="btn-primary inline-flex items-center justify-center gap-2 w-full sm:w-auto"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

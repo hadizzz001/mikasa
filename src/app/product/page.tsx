@@ -12,6 +12,7 @@ import { useCartBool } from "../../context/CartBoolContext";
 import { useFav } from "../../context/FavContext";
 import { productImage } from "../../lib/cloudinaryQuality";
 import { getJson } from "../../lib/apiFetch";
+import { productParams, track } from "../../lib/metaPixel";
 import {
   type Product,
   type ColorEntry,
@@ -97,6 +98,10 @@ function ProductContent() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    if (product) track("ViewContent", productParams(product));
+  }, [product]);
+
   // Related products from the same categories (multi-category aware).
   useEffect(() => {
     if (!product) return;
@@ -150,12 +155,20 @@ function ProductContent() {
         lineKeyOf({ _id: product._id, selectedColor: colorName, selectedSize })
     );
 
+  const trackCustomize = (color?: string, size?: string) => {
+    if (product) {
+      track("CustomizeProduct", { ...productParams(product, { color, size }), color, size });
+    }
+  };
+
   const handleColor = (idx: number) => {
     setColorIdx(idx);
     setActiveImg(0);
     setQty(1);
     const firstReal = colors[idx]?.sizes?.find((s) => s.size !== "")?.size;
-    setSelectedSize(firstReal ?? colors[idx]?.sizes?.[0]?.size ?? "");
+    const nextSize = firstReal ?? colors[idx]?.sizes?.[0]?.size ?? "";
+    setSelectedSize(nextSize);
+    trackCustomize(colors[idx]?.color, nextSize);
   };
 
   const galleryLen = gallery.length;
@@ -359,6 +372,7 @@ function ProductContent() {
                       onClick={() => {
                         setSelectedSize(s.size);
                         setQty(1);
+                        trackCustomize(colorName, s.size);
                       }}
                       className={`min-w-[3rem] px-4 h-11 rounded-md border text-sm font-medium transition ${
                         selectedSize === s.size

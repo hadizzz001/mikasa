@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { getEffectivePrice, type Product } from "../lib/productPricing";
+import { productParams, track, trackCustom } from "../lib/metaPixel";
 
 export interface CartLine extends Product {
   quantity: number;
@@ -88,6 +89,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       finalSize = item.color[0].sizes[0].size;
     }
 
+    track("AddToCart", productParams(item, { quantity, color: finalColor, size: finalSize }));
+
     const candidate = { _id: item._id, selectedColor: finalColor, selectedSize: finalSize };
     const key = lineKeyOf(candidate);
     const existing = cart.find((ci) => lineKeyOf(ci) === key);
@@ -111,6 +114,17 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const removeFromCart = (lineKey: string) => {
+    const line = cart.find((ci) => lineKeyOf(ci) === lineKey);
+    if (line) {
+      trackCustom(
+        "RemoveFromCart",
+        productParams(line, {
+          quantity: line.quantity,
+          color: line.selectedColor,
+          size: line.selectedSize,
+        })
+      );
+    }
     dispatch({ type: "REMOVE_FROM_CART", payload: lineKey });
   };
 

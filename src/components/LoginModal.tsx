@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { productImage } from "../lib/cloudinaryQuality";
 import { PLACEHOLDER_IMAGE } from "../lib/productPricing";
 import { getJson } from "../lib/apiFetch";
+import { track, trackCustom } from "../lib/metaPixel";
 
 type Props = {
   open: boolean;
@@ -119,6 +120,8 @@ export default function LoginModal({ open, onClose }: Props) {
       // Persist the user — AuthContext writes it to localStorage so access
       // survives reloads.
       login(data.user);
+      if (isLogin) trackCustom("Login");
+      else track("CompleteRegistration", { content_name: "Customer account", status: true });
       setName("");
       setEmail("");
       setPassword("");
